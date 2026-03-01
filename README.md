@@ -13,7 +13,10 @@
   <a href="https://github.com/ericwang915/PythonClaw/actions/workflows/ci.yml">
     <img src="https://github.com/ericwang915/PythonClaw/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
-  <img src="https://img.shields.io/badge/python-3.10+-blue?logo=python&logoColor=white" alt="Python 3.10+">
+  <a href="https://pypi.org/project/pythonclaw/">
+    <img src="https://img.shields.io/pypi/v/pythonclaw?color=blue" alt="PyPI">
+  </a>
+  <img src="https://img.shields.io/pypi/pyversions/pythonclaw" alt="Python">
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/ericwang915/PythonClaw" alt="MIT License">
   </a>
