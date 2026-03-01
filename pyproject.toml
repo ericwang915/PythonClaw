@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pythonclaw"
 version = "0.2.0"
-description = "Open-source autonomous AI agent framework — memory, RAG, skills, multi-channel, daemon, web dashboard."
+description = "OpenClaw reimagined in pure Python — autonomous AI agent with memory, RAG, skills, web dashboard, and multi-channel support."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"

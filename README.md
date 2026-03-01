@@ -5,7 +5,7 @@
 <h1 align="center">PythonClaw</h1>
 
 <p align="center">
-  <strong>Autonomous AI agent framework — built in pure Python.</strong><br>
+  <strong>OpenClaw, reimagined in pure Python — purely Pythonic design.</strong><br>
   Memory · RAG · Skills · Web Dashboard · Voice · Daemon · Multi-Channel
 </p>
 
@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <em>Inspired by <a href="https://github.com/openclaw/openclaw">OpenClaw</a> — reimagined in Python with full provider flexibility.</em>
+  <em>The Python port of <a href="https://github.com/openclaw/openclaw">OpenClaw</a> — no Node.js, no Rust, no C extensions. Just Python.</em>
 </p>
 
 ---
