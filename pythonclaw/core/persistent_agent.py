@@ -31,7 +31,6 @@ from .agent import Agent
 
 if TYPE_CHECKING:
     from .session_store import SessionStore
-    from .llm.base import LLMProvider
 
 logger = logging.getLogger(__name__)
 

@@ -23,13 +23,9 @@ are returned (full-dump mode, used by compaction and legacy callers).
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
 
 from .storage import MemoryStorage
 from ..retrieval.retriever import HybridRetriever
-
-if TYPE_CHECKING:
-    from ..llm.base import LLMProvider
 
 logger = logging.getLogger(__name__)
 

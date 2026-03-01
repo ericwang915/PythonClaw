@@ -3,7 +3,6 @@
 
 import argparse
 import os
-import sys
 
 SOUL_TEMPLATE = """# PythonClaw — Soul
 

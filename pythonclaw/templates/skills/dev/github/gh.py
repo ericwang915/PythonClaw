@@ -82,7 +82,7 @@ def cmd_issues(full_name: str) -> None:
     for i in issues:
         if i.get("pull_request"):
             continue
-        labels = ", ".join(l["name"] for l in i.get("labels", []))
+        labels = ", ".join(lb["name"] for lb in i.get("labels", []))
         print(f"  #{i['number']}  {i['title']}")
         if labels:
             print(f"    Labels: {labels}")

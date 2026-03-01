@@ -14,7 +14,6 @@ Subcommands
 import argparse
 import asyncio
 import logging
-import sys
 
 from . import config
 from .core.persistent_agent import PersistentAgent
@@ -214,7 +213,7 @@ def _cmd_chat(args) -> None:
 
     cfg_path = config.config_path()
     cfg_source = f" (config: {cfg_path})" if cfg_path else ""
-    print(f"\n--- PythonClaw Agent ---")
+    print("\n--- PythonClaw Agent ---")
     print(f"Provider: {provider_name}{cfg_source}")
     print(f"Session: {store._path(session_id)}")
     print("Commands: 'exit' to quit | '/compact [hint]' | '/status' | '/clear'")

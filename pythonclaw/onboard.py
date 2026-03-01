@@ -9,8 +9,6 @@ from __future__ import annotations
 
 import getpass
 import json
-import os
-import sys
 from pathlib import Path
 
 from . import config
@@ -173,10 +171,10 @@ def _get_api_key(provider: dict, cfg: dict) -> str:
         hint = f" (current: {masked}, press Enter to keep)"
 
     print(f"  {provider['name']} API Key{hint}")
-    key = getpass.getpass(f"  API Key: ").strip()
+    key = getpass.getpass("  API Key: ").strip()
 
     if not key and has_existing:
-        print(f"  → Keeping existing key")
+        print("  → Keeping existing key")
         return existing
     if not key:
         print(_c("  API key is required.", _RED))
@@ -197,7 +195,7 @@ def _optional_keys(cfg: dict) -> None:
         tavily = input("  Tavily API Key (web search): ").strip()
         if tavily:
             cfg.setdefault("tavily", {})["apiKey"] = tavily
-            print(f"  → Tavily key set")
+            print("  → Tavily key set")
 
     # Deepgram
     dg_existing = cfg.get("deepgram", {}).get("apiKey", "")
@@ -205,7 +203,7 @@ def _optional_keys(cfg: dict) -> None:
         dg = input("  Deepgram API Key (voice input): ").strip()
         if dg:
             cfg.setdefault("deepgram", {})["apiKey"] = dg
-            print(f"  → Deepgram key set")
+            print("  → Deepgram key set")
 
     # SkillHub
     sh_existing = cfg.get("skillhub", {}).get("apiKey", "")
@@ -213,7 +211,7 @@ def _optional_keys(cfg: dict) -> None:
         sh = input("  SkillHub API Key (marketplace): ").strip()
         if sh:
             cfg.setdefault("skillhub", {})["apiKey"] = sh
-            print(f"  → SkillHub key set")
+            print("  → SkillHub key set")
 
     print()
 

@@ -169,7 +169,7 @@ def print_status() -> None:
         print("[PythonClaw] No daemon is running.")
         return
 
-    print(f"[PythonClaw] Daemon Status")
+    print("[PythonClaw] Daemon Status")
     print(f"  PID      : {status['pid']}")
     print(f"  Uptime   : {status.get('uptime', 'unknown')}")
     print(f"  Port     : {status.get('port', '?')}")
