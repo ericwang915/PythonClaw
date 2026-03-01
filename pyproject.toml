@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pythonclaw"
-version = "0.2.2"
+version = "0.2.3"
 description = "OpenClaw reimagined in pure Python — autonomous AI agent with memory, RAG, skills, web dashboard, and multi-channel support."
 readme = "README.md"
 license = {text = "MIT"}
@@ -83,6 +83,11 @@ include = ["pythonclaw*"]
 
 [tool.setuptools.package-data]
 pythonclaw = [
-    "templates/**/*",
+    "templates/**/*.py",
+    "templates/**/*.yaml",
+    "templates/**/*.md",
     "web/static/**/*",
 ]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["__pycache__", "*.pyc", "*.pyo"]
