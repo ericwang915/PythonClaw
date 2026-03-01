@@ -479,6 +479,29 @@
               </div>
             </div>
 
+            <!-- Channels -->
+            <div class="cfg-section">
+              <h3 class="cfg-title">Channels</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                <div class="sm:col-span-2">
+                  <label class="block text-xs text-gray-500 mb-1.5">Telegram Bot Token</label>
+                  <input id="cfg-tg-token" type="password" class="input-field">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1.5">Telegram Allowed Users</label>
+                  <input id="cfg-tg-users" type="text" placeholder="Comma-separated user IDs (blank = allow all)" class="input-field">
+                </div>
+                <div class="sm:col-span-2 mt-2">
+                  <label class="block text-xs text-gray-500 mb-1.5">Discord Bot Token</label>
+                  <input id="cfg-dc-token" type="password" class="input-field">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-500 mb-1.5">Discord Allowed Channels</label>
+                  <input id="cfg-dc-channels" type="text" placeholder="Comma-separated channel IDs (blank = allow all)" class="input-field">
+                </div>
+              </div>
+            </div>
+
             <!-- Web Dashboard -->
             <div class="cfg-section">
               <h3 class="cfg-title">Web Dashboard</h3>
@@ -1008,6 +1031,19 @@ async function loadConfig() {
     ghTokenField.placeholder = secretsSet['skills.github.token']
       ? '(token is set — leave blank to keep)' : 'ghp_xxxxxxxxxx';
 
+    const channels = _rawConfig.channels || {};
+    const tgCfg = channels.telegram || {};
+    const tgTokenField = document.getElementById('cfg-tg-token');
+    tgTokenField.value = '';
+    tgTokenField.placeholder = secretsSet['channels.telegram.token'] ? '(token is set — leave blank to keep)' : 'Enter Telegram bot token';
+    document.getElementById('cfg-tg-users').value = (tgCfg.allowedUsers || []).join(', ');
+
+    const dcCfg = channels.discord || {};
+    const dcTokenField = document.getElementById('cfg-dc-token');
+    dcTokenField.value = '';
+    dcTokenField.placeholder = secretsSet['channels.discord.token'] ? '(token is set — leave blank to keep)' : 'Enter Discord bot token';
+    document.getElementById('cfg-dc-channels').value = (dcCfg.allowedChannels || []).join(', ');
+
     const web = _rawConfig.web || {};
     document.getElementById('cfg-web-host').value = web.host || '0.0.0.0';
     document.getElementById('cfg-web-port').value = web.port || 7788;
@@ -1089,6 +1125,19 @@ async function saveConfig() {
     if (!cfg.skills.github) cfg.skills.github = {};
     const ghToken = document.getElementById('cfg-github-token').value.trim();
     if (ghToken) cfg.skills.github.token = ghToken;
+
+    if (!cfg.channels) cfg.channels = {};
+    if (!cfg.channels.telegram) cfg.channels.telegram = {};
+    const tgToken = document.getElementById('cfg-tg-token').value.trim();
+    if (tgToken) cfg.channels.telegram.token = tgToken;
+    const tgUsers = document.getElementById('cfg-tg-users').value.trim();
+    cfg.channels.telegram.allowedUsers = tgUsers ? tgUsers.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+    if (!cfg.channels.discord) cfg.channels.discord = {};
+    const dcToken = document.getElementById('cfg-dc-token').value.trim();
+    if (dcToken) cfg.channels.discord.token = dcToken;
+    const dcChannels = document.getElementById('cfg-dc-channels').value.trim();
+    cfg.channels.discord.allowedChannels = dcChannels ? dcChannels.split(',').map(s => s.trim()).filter(Boolean) : [];
 
     if (!cfg.web) cfg.web = {};
     cfg.web.host = document.getElementById('cfg-web-host').value.trim() || '0.0.0.0';

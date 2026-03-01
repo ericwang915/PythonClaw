@@ -214,6 +214,54 @@ def _optional_keys(cfg: dict) -> None:
             print("  → SkillHub key set")
 
     print()
+    _channel_keys(cfg)
+
+
+def _channel_keys(cfg: dict) -> None:
+    print(_c("  Channels (press Enter to skip):", _DIM))
+    print()
+
+    channels = cfg.setdefault("channels", {})
+
+    # Telegram
+    tg = channels.setdefault("telegram", {"token": "", "allowedUsers": []})
+    tg_existing = tg.get("token", "")
+    if tg_existing:
+        masked = tg_existing[:6] + "****" + tg_existing[-4:] if len(tg_existing) > 10 else "****"
+        print(f"  Telegram Bot Token (current: {masked}, press Enter to keep)")
+    token = input("  Telegram Bot Token: ").strip()
+    if token:
+        tg["token"] = token
+        print("  → Telegram token set")
+    elif tg_existing:
+        print("  → Keeping existing Telegram token")
+
+    allowed = input("  Telegram Allowed User IDs (comma-separated, or Enter to allow all): ").strip()
+    if allowed:
+        tg["allowedUsers"] = [uid.strip() for uid in allowed.split(",") if uid.strip()]
+        print(f"  → {len(tg['allowedUsers'])} user(s) whitelisted")
+
+    print()
+
+    # Discord
+    dc = channels.setdefault("discord", {"token": "", "allowedUsers": [], "allowedChannels": []})
+    dc_existing = dc.get("token", "")
+    if dc_existing:
+        masked = dc_existing[:6] + "****" + dc_existing[-4:] if len(dc_existing) > 10 else "****"
+        print(f"  Discord Bot Token (current: {masked}, press Enter to keep)")
+    dc_token = input("  Discord Bot Token: ").strip()
+    if dc_token:
+        dc["token"] = dc_token
+        print("  → Discord token set")
+    elif dc_existing:
+        print("  → Keeping existing Discord token")
+
+    dc_channels = input("  Discord Allowed Channel IDs (comma-separated, or Enter to allow all): ").strip()
+    if dc_channels:
+        dc["allowedChannels"] = [ch.strip() for ch in dc_channels.split(",") if ch.strip()]
+        print(f"  → {len(dc['allowedChannels'])} channel(s) whitelisted")
+
+    print()
 
 
 def _validate_key(cfg: dict, provider: dict) -> None:
