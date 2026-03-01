@@ -37,6 +37,7 @@ _provider: LLMProvider | None = None
 _store: SessionStore | None = None
 _start_time: float = 0.0
 _build_provider_fn = None
+_active_bots: list = []
 
 WEB_SESSION_ID = "web:dashboard"
 
@@ -73,6 +74,8 @@ def create_app(provider: LLMProvider | None, *, build_provider_fn=None) -> FastA
     app.add_api_route("/api/skillhub/search", _api_skillhub_search, methods=["POST"])
     app.add_api_route("/api/skillhub/browse", _api_skillhub_browse, methods=["GET"])
     app.add_api_route("/api/skillhub/install", _api_skillhub_install, methods=["POST"])
+    app.add_api_route("/api/channels", _api_channels_status, methods=["GET"])
+    app.add_api_route("/api/channels/restart", _api_channels_restart, methods=["POST"])
     app.add_websocket_route("/ws/chat", _ws_chat)
 
     return app
@@ -226,7 +229,14 @@ async def _api_config_save(request: Request):
             logger.warning("[Web] Provider rebuild failed: %s", exc)
             _provider = None
 
-    return {"ok": True, "configPath": str(cfg_path), "providerReady": _provider is not None}
+    channels_started = await _maybe_start_channels()
+
+    return {
+        "ok": True,
+        "configPath": str(cfg_path),
+        "providerReady": _provider is not None,
+        "channelsStarted": channels_started,
+    }
 
 
 async def _api_skills():
@@ -505,6 +515,81 @@ async def _api_skillhub_install(request: Request):
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=502)
     except Exception as exc:
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
+
+
+async def _maybe_start_channels() -> list[str]:
+    """Start channels whose tokens are now configured but not yet running."""
+    global _active_bots
+    if _provider is None:
+        return []
+
+    wanted = []
+    tg_token = config.get_str("channels", "telegram", "token", default="")
+    if tg_token:
+        wanted.append("telegram")
+    dc_token = config.get_str("channels", "discord", "token", default="")
+    if dc_token:
+        wanted.append("discord")
+
+    if not wanted:
+        return []
+
+    running_types = set()
+    for bot in _active_bots:
+        cls_name = type(bot).__name__.lower()
+        if "telegram" in cls_name:
+            running_types.add("telegram")
+        elif "discord" in cls_name:
+            running_types.add("discord")
+
+    to_start = [ch for ch in wanted if ch not in running_types]
+    if not to_start:
+        return list(running_types)
+
+    try:
+        from ..server import start_channels
+        new_bots = await start_channels(_provider, to_start)
+        _active_bots.extend(new_bots)
+        return [ch for ch in wanted if ch in running_types or ch in to_start]
+    except Exception as exc:
+        logger.warning("[Web] Channel start failed: %s", exc)
+        return list(running_types)
+
+
+async def _api_channels_status():
+    """Return status of messaging channels."""
+    channels = []
+    for bot in _active_bots:
+        cls_name = type(bot).__name__
+        ch_type = "telegram" if "Telegram" in cls_name else "discord" if "Discord" in cls_name else cls_name
+        channels.append({"type": ch_type, "running": True})
+
+    tg_token = config.get_str("channels", "telegram", "token", default="")
+    dc_token = config.get_str("channels", "discord", "token", default="")
+    running_types = {c["type"] for c in channels}
+
+    if tg_token and "telegram" not in running_types:
+        channels.append({"type": "telegram", "running": False, "tokenSet": True})
+    if dc_token and "discord" not in running_types:
+        channels.append({"type": "discord", "running": False, "tokenSet": True})
+
+    return {"channels": channels}
+
+
+async def _api_channels_restart(request: Request):
+    """Stop and restart all configured channels."""
+    global _active_bots
+
+    for bot in _active_bots:
+        if hasattr(bot, "stop_async"):
+            try:
+                await bot.stop_async()
+            except Exception:
+                pass
+    _active_bots = []
+
+    started = await _maybe_start_channels()
+    return {"ok": True, "channels": started}
 
 
 def _reload_agent_identity() -> None:

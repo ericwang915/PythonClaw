@@ -209,6 +209,16 @@
                 <div id="stat-history" class="text-[.6875rem] text-gray-500">0 msgs in history</div>
               </div>
             </div>
+            <div class="stat-card section-card flex items-start gap-3.5">
+              <div class="w-9 h-9 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0 mt-0.5">
+                <svg class="w-4.5 h-4.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              </div>
+              <div class="min-w-0">
+                <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Channels</div>
+                <div id="stat-channels" class="text-base font-semibold text-white">Web only</div>
+                <div id="stat-channels-detail" class="text-[.6875rem] text-gray-500">web dashboard</div>
+              </div>
+            </div>
           </div>
 
           <!-- Identity & Status Row -->
@@ -493,7 +503,10 @@
 
             <!-- Channels -->
             <div class="cfg-section">
-              <h3 class="cfg-title">Channels</h3>
+              <h3 class="cfg-title flex items-center gap-2">
+                Channels
+                <span id="cfg-channel-status" class="text-[.625rem] font-normal text-gray-500"></span>
+              </h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                 <div class="sm:col-span-2">
                   <label class="block text-xs text-gray-500 mb-1.5">Telegram Bot Token</label>
@@ -512,6 +525,7 @@
                   <input id="cfg-dc-channels" type="text" placeholder="Comma-separated channel IDs (blank = allow all)" class="input-field">
                 </div>
               </div>
+              <p class="text-[.6875rem] text-gray-600 mt-3">Channels auto-start after saving. Tokens are stored securely.</p>
             </div>
 
             <!-- Web Dashboard -->
@@ -635,6 +649,21 @@ async function refreshDashboard() {
     const banner = document.getElementById('dash-banner');
     banner.classList.toggle('hidden', d.providerReady !== false);
   } catch (e) { console.error('Status fetch:', e); }
+
+  try {
+    const chRes = await fetch('/api/channels');
+    const chData = await chRes.json();
+    const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
+    const chEl = document.getElementById('stat-channels');
+    const chDetailEl = document.getElementById('stat-channels-detail');
+    if (running.length > 0) {
+      chEl.textContent = (running.length + 1) + ' active';
+      chDetailEl.textContent = 'web + ' + running.join(', ');
+    } else {
+      chEl.textContent = 'Web only';
+      chDetailEl.textContent = 'web dashboard';
+    }
+  } catch (e) {}
 
   try {
     const res2 = await fetch('/api/identity');
@@ -1085,6 +1114,19 @@ async function loadConfig() {
 
     document.getElementById('cfg-json-raw').value = JSON.stringify(_rawConfig, null, 2);
     document.getElementById('config-save-status').textContent = '';
+
+    // Channel status
+    try {
+      const chRes = await fetch('/api/channels');
+      const chData = await chRes.json();
+      const statusEl = document.getElementById('cfg-channel-status');
+      const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
+      if (running.length > 0) {
+        statusEl.innerHTML = '<span class="text-accent-green">● ' + running.join(', ') + ' running</span>';
+      } else {
+        statusEl.textContent = '';
+      }
+    } catch (e) {}
   } catch (e) { console.error('Config fetch:', e); }
 }
 

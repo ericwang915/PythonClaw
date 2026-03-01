@@ -2,21 +2,7 @@
 Daemon server for PythonClaw — multi-channel mode.
 
 Supports Telegram and Discord channels, individually or combined.
-
-Architecture
-------------
-                    +----------------------------------------+
-                    |          SessionManager                 |
-                    |  "{channel}:{id}" → Agent               |
-                    |  "cron:{job_id}"  → Agent               |
-                    |  (Markdown-backed via SessionStore)      |
-                    +----------------------------------------+
-                               |
-          +--------------------+--------------------+
-          |                    |                    |
-    TelegramBot          CronScheduler       HeartbeatMonitor
-    DiscordBot           static + dynamic
-                         jobs
+The web dashboard always runs; channels are started alongside it.
 """
 
 from __future__ import annotations
@@ -30,43 +16,29 @@ from .core.llm.base import LLMProvider
 from .core.persistent_agent import PersistentAgent
 from .core.session_store import SessionStore
 from .scheduler.cron import CronScheduler
-from .scheduler.heartbeat import create_heartbeat
 from .session_manager import SessionManager
 
 logger = logging.getLogger(__name__)
 
 
-async def run_server(
+async def start_channels(
     provider: LLMProvider,
-    channels: list[str] | None = None,
-) -> None:
-    """
-    Main entry point for daemon mode.
+    channels: list[str],
+) -> list:
+    """Start messaging channels (Telegram, Discord) as background tasks.
 
-    Parameters
-    ----------
-    provider  : the LLM provider to use
-    channels  : list of channels to start, e.g. ["telegram", "discord"].
-                Defaults to ["telegram"] for backward compatibility.
+    Returns the list of successfully started bot objects.
+    Safe to call during FastAPI startup — failures are logged, not raised.
     """
-    if channels is None:
-        channels = ["telegram"]
-
-    # ── 1. Session store (Markdown persistence) ───────────────────────────────
     store = SessionStore()
-    logger.info("[Server] SessionStore initialised at '%s'", store.base_dir)
-
-    # ── 2. SessionManager (placeholder factory, updated below) ────────────────
     session_manager = SessionManager(agent_factory=lambda sid: None, store=store)
 
-    # ── 3. CronScheduler ─────────────────────────────────────────────────────
     jobs_path = os.path.join("context", "cron", "jobs.yaml")
     scheduler = CronScheduler(
         session_manager=session_manager,
         jobs_path=jobs_path,
     )
 
-    # ── 4. Real agent factory ─────────────────────────────────────────────────
     def agent_factory(session_id: str) -> PersistentAgent:
         return PersistentAgent(
             provider=provider,
@@ -78,7 +50,6 @@ async def run_server(
 
     session_manager.set_factory(agent_factory)
 
-    # ── 5. Start channels ─────────────────────────────────────────────────────
     active_bots: list = []
 
     if "telegram" in channels:
@@ -89,8 +60,8 @@ async def run_server(
             await bot.start_async()
             active_bots.append(bot)
             logger.info("[Server] Telegram bot started.")
-        except (ValueError, ImportError) as exc:
-            logger.warning("[Server] Telegram skipped: %s", exc)
+        except Exception as exc:
+            logger.warning("[Server] Telegram channel failed to start: %s", exc)
 
     if "discord" in channels:
         try:
@@ -99,25 +70,36 @@ async def run_server(
             asyncio.create_task(discord_bot.start_async())
             active_bots.append(discord_bot)
             logger.info("[Server] Discord bot started.")
-        except (ValueError, ImportError) as exc:
-            logger.warning("[Server] Discord skipped: %s", exc)
+        except Exception as exc:
+            logger.warning("[Server] Discord channel failed to start: %s", exc)
+
+    if active_bots:
+        scheduler.start()
+        logger.info("[Server] Channels running: %s", ", ".join(channels))
+    else:
+        logger.warning("[Server] No channels started — check tokens in pythonclaw.json.")
+
+    return active_bots
+
+
+async def run_server(
+    provider: LLMProvider,
+    channels: list[str] | None = None,
+) -> None:
+    """Standalone server entry point (channels only, no web).
+
+    Kept for backward compatibility.  Prefer using ``start_channels``
+    together with the web dashboard in ``_run_foreground``.
+    """
+    if channels is None:
+        channels = ["telegram"]
+
+    active_bots = await start_channels(provider, channels)
 
     if not active_bots:
-        logger.error("[Server] No channels started. Check your pythonclaw.json configuration.")
+        logger.error("[Server] No channels started. Exiting.")
         return
 
-    # ── 6. Start scheduler ────────────────────────────────────────────────────
-    scheduler.start()
-
-    # ── 7. Heartbeat monitor ──────────────────────────────────────────────────
-    telegram_bot = next((b for b in active_bots if hasattr(b, '_app')), None)
-    heartbeat = create_heartbeat(provider=provider, telegram_bot=telegram_bot)
-    await heartbeat.start()
-
-    logger.info("[Server] All subsystems running (%s). Press Ctrl-C to stop.",
-                ", ".join(channels))
-
-    # ── Graceful shutdown ─────────────────────────────────────────────────────
     stop_event = asyncio.Event()
 
     def _signal_handler() -> None:
@@ -136,9 +118,7 @@ async def run_server(
     except (KeyboardInterrupt, asyncio.CancelledError):
         pass
     finally:
-        logger.info("[Server] Shutting down subsystems...")
-        await heartbeat.stop()
-        scheduler.stop()
+        logger.info("[Server] Shutting down...")
         for bot in active_bots:
             if hasattr(bot, 'stop_async'):
                 await bot.stop_async()

@@ -149,28 +149,46 @@ def _run_foreground(args) -> None:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
-    if channels:
-        # Run web + channels together
-        from .server import run_server
-        print(f"[PythonClaw] Starting (web + {', '.join(channels)})...")
-        asyncio.run(run_server(provider, channels=channels))
-    else:
-        # Web-only
-        try:
-            import uvicorn
-        except ImportError:
-            print("Error: Web mode requires 'fastapi' and 'uvicorn'.")
-            print("Install with: pip install pythonclaw[web]")
-            return
+    try:
+        import uvicorn
+    except ImportError:
+        print("Error: Web mode requires 'fastapi' and 'uvicorn'.")
+        print("Install with: pip install pythonclaw[web]")
+        return
 
-        from .web.app import create_app
+    from .web.app import create_app
 
-        host = config.get_str("web", "host", default="0.0.0.0")
-        port = config.get_int("web", "port", default=7788)
+    host = config.get_str("web", "host", default="0.0.0.0")
+    port = config.get_int("web", "port", default=7788)
 
-        app = create_app(provider, build_provider_fn=_build_provider)
-        print(f"[PythonClaw] Web dashboard: http://localhost:{port}")
-        uvicorn.run(app, host=host, port=port, log_level="info")
+    app = create_app(provider, build_provider_fn=_build_provider)
+
+    ch_to_start = channels or _detect_configured_channels()
+    if ch_to_start:
+        from .server import start_channels
+        from .web import app as web_app_module
+        label = "explicit" if channels else "auto-detected"
+        print(f"[PythonClaw] Channels ({label}): {', '.join(ch_to_start)}")
+
+        @app.on_event("startup")
+        async def _start_channels():
+            bots = await start_channels(provider, ch_to_start)
+            web_app_module._active_bots.extend(bots)
+
+    print(f"[PythonClaw] Web dashboard: http://localhost:{port}")
+    uvicorn.run(app, host=host, port=port, log_level="info")
+
+
+def _detect_configured_channels() -> list[str]:
+    """Return channel names that have a token configured."""
+    found = []
+    tg_token = config.get_str("channels", "telegram", "token", default="")
+    if tg_token:
+        found.append("telegram")
+    dc_token = config.get_str("channels", "discord", "token", default="")
+    if dc_token:
+        found.append("discord")
+    return found
 
 
 def _cmd_stop(args) -> None:
