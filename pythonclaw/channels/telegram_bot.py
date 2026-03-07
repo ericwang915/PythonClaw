@@ -334,18 +334,11 @@ class TelegramBot:
                             await live_msg.edit_text(before[:4096])
                         else:
                             await update.message.reply_text(before[:4096])
+                        sent_any = True
                     except Exception:
                         pass
                 live_msg = None
                 live_text = ""
-                tools = marker.group(1)
-                try:
-                    await update.message.reply_text(
-                        f"\U0001f527 {tools}\u2026"
-                    )
-                except Exception:
-                    pass
-                sent_any = True
                 buf = [raw[marker.end():].lstrip()]
                 last_edit = now
                 continue

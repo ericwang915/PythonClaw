@@ -323,23 +323,32 @@ class Agent:
 - **Memory**: `remember(key,val)`, `recall(query)`, `memory_get(path)`, `memory_list_files()`, `forget(key)`, `update_index(content)`
 - **Skill creation**: `create_skill` — create generic reusable skills when none fit{web_search_section}
 
+### Task Execution Modes
+Choose your approach based on task complexity:
+
+**ReAct** (simple tasks, 1-2 steps): Act directly — call tools and respond immediately.
+
+**Plan & Execute** (complex tasks, 3+ steps, research, multi-source analysis):
+1. Output a short numbered plan (3-6 steps) as your first response
+2. Execute each step using tools — call multiple tools in parallel when steps are independent (up to {self.MAX_PARALLEL_SKILLS} parallel skills)
+3. After each step, briefly summarize what you found before moving on
+4. After all steps, synthesize a concise final answer
+
+You decide which mode fits. Don't announce the mode name.
+
 ### Rules
-- **Parallel skill execution**: For complex tasks, call multiple `use_skill` in ONE response (up to {self.MAX_PARALLEL_SKILLS} skills). They run in parallel for speed. Example: researching a topic? Activate `news`, `web_search`, and `summarize` simultaneously.
 - Batch independent tool calls in one response (parallel execution).
 - Minimize search rounds (1-3 max). Combine queries. Don't repeat.
 - Proactively `remember` user preferences, decisions, key facts.
 - Use `recall` when user references past context.
 - Memory auto-loaded at session start. INDEX.md = curated system info.
-
-Always verify command output.
+- NEVER output tool calls as XML or text. Always use the function calling API.
 
 ### Response Guidelines
 - Answer the user's question directly and concisely.
-- For complex multi-step tasks: share a **brief plan** first (2-4 bullet points), then work step by step. Report progress after each major step — don't wait until the end.
-- Keep responses focused and concise — under 300 words when possible. Break long answers into short paragraphs.
+- Keep responses focused — under 300 words when possible. Break long answers into short paragraphs.
 - Do NOT mention what skills or tools you have available, unless explicitly asked.
 - Do NOT list other things you can do at the end of your response.
-- NEVER output tool calls as XML or text. Always use the function calling API.
 """
         # ── Auto-inject memory context ────────────────────────────────────
         boot_mem = self.memory.boot_context(max_chars=3000)
