@@ -27,7 +27,10 @@ class AnthropicProvider(LLMProvider):
     supports_images = True
 
     def __init__(self, api_key: str, model_name: str = "claude-sonnet-4-20250514"):
-        self.client = anthropic.Anthropic(api_key=api_key)
+        self.client = anthropic.Anthropic(
+            api_key=api_key,
+            timeout=120.0,
+        )
         self.model_name = model_name
         self._auth_type = (
             "setup-token" if not api_key.startswith("sk-ant-") else "api-key"

@@ -104,6 +104,7 @@ class GeminiProvider(LLMProvider):
         response = self.model.generate_content(
             contents=gemini_history,
             tools=gemini_tools,
+            request_options={"timeout": 120},
         )
 
         # Convert to OpenAI-compatible format

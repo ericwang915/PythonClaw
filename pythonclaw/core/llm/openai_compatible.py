@@ -19,7 +19,11 @@ class OpenAICompatibleProvider(LLMProvider):
     """Thin wrapper around the OpenAI SDK for chat completions."""
 
     def __init__(self, api_key: str, base_url: str, model_name: str) -> None:
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=120.0,
+        )
         self.model_name = model_name
 
     def chat(

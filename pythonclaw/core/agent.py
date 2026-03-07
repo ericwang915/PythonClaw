@@ -24,6 +24,7 @@ import logging
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import TimeoutError as FuturesTimeout
 from datetime import datetime
 
 from .. import config
@@ -121,6 +122,7 @@ class Agent:
 
     MAX_TOOL_ROUNDS = 8
     MAX_PARALLEL_SKILLS = 5
+    TOOL_TIMEOUT = 90
 
     def __init__(
         self,
@@ -333,8 +335,11 @@ Always verify command output.
 
 ### Response Guidelines
 - Answer the user's question directly and concisely.
+- For complex multi-step tasks: share a **brief plan** first (2-4 bullet points), then work step by step. Report progress after each major step — don't wait until the end.
+- Keep responses focused and concise — under 300 words when possible. Break long answers into short paragraphs.
 - Do NOT mention what skills or tools you have available, unless explicitly asked.
 - Do NOT list other things you can do at the end of your response.
+- NEVER output tool calls as XML or text. Always use the function calling API.
 """
         # ── Auto-inject memory context ────────────────────────────────────
         boot_mem = self.memory.boot_context(max_chars=3000)
@@ -939,53 +944,53 @@ Don't repeat this if `bot_name` already exists in memory.
                     ],
                 })
 
-                if len(tool_calls) == 1:
-                    t0 = time.monotonic()
-                    result = self._execute_tool_call(tool_calls[0])
-                    _log_detail({
-                        "event": "tool_result",
-                        "round": tool_rounds,
-                        "name": tool_calls[0].function.name,
-                        "elapsed_ms": int((time.monotonic() - t0) * 1000),
-                        "result_len": len(result),
-                    })
+                t0 = time.monotonic()
+                results: dict[str, str] = {}
+                with ThreadPoolExecutor(max_workers=min(len(tool_calls), 8)) as pool:
+                    futures = {
+                        pool.submit(self._execute_tool_call, tc): tc
+                        for tc in tool_calls
+                    }
+                    for future in as_completed(futures, timeout=self.TOOL_TIMEOUT):
+                        tc = futures[future]
+                        try:
+                            results[tc.id] = future.result()
+                        except Exception as exc:
+                            results[tc.id] = f"Error: {exc}"
+                for tc in tool_calls:
+                    if tc.id not in results:
+                        results[tc.id] = (
+                            f"Error: tool '{tc.function.name}' timed out "
+                            f"after {self.TOOL_TIMEOUT}s"
+                        )
+                _log_detail({
+                    "event": "tool_results",
+                    "round": tool_rounds,
+                    "count": len(tool_calls),
+                    "elapsed_ms": int((time.monotonic() - t0) * 1000),
+                    "tools": [tc.function.name for tc in tool_calls],
+                })
+                for tc in tool_calls:
                     self.messages.append({
                         "role": "tool",
-                        "tool_call_id": tool_calls[0].id,
-                        "content": result,
+                        "tool_call_id": tc.id,
+                        "content": results[tc.id],
                     })
-                else:
-                    t0 = time.monotonic()
-                    results: dict[str, str] = {}
-                    with ThreadPoolExecutor(max_workers=min(len(tool_calls), 8)) as pool:
-                        futures = {
-                            pool.submit(self._execute_tool_call, tc): tc
-                            for tc in tool_calls
-                        }
-                        for future in as_completed(futures):
-                            tc = futures[future]
-                            try:
-                                results[tc.id] = future.result()
-                            except Exception as exc:
-                                results[tc.id] = f"Error: {exc}"
-                    _log_detail({
-                        "event": "tool_results_parallel",
-                        "round": tool_rounds,
-                        "count": len(tool_calls),
-                        "elapsed_ms": int((time.monotonic() - t0) * 1000),
-                        "tools": [tc.function.name for tc in tool_calls],
-                    })
-                    for tc in tool_calls:
-                        self.messages.append({
-                            "role": "tool",
-                            "tool_call_id": tc.id,
-                            "content": results[tc.id],
-                        })
 
                 for injection in self.pending_injections:
                     self.messages.append({"role": "system", "content": injection})
                 self.pending_injections = []
 
+            except FuturesTimeout:
+                logger.warning("Tool execution timed out at round %d", tool_rounds)
+                for tc in tool_calls:
+                    if tc.id not in results:
+                        self.messages.append({
+                            "role": "tool",
+                            "tool_call_id": tc.id,
+                            "content": f"Error: timed out after {self.TOOL_TIMEOUT}s",
+                        })
+                continue
             except Exception as exc:
                 logger.exception("Critical error in Agent.chat()")
                 return f"Error: {exc}"
@@ -1087,34 +1092,33 @@ Don't repeat this if `bot_name` already exists in memory.
                     names = ", ".join(tc.function.name for tc in tool_calls)
                     on_token(f"\n\n`[calling: {names}]`\n\n")
 
-                if len(tool_calls) == 1:
-                    result = self._execute_tool_call(tool_calls[0])
+                results: dict[str, str] = {}
+                with ThreadPoolExecutor(
+                    max_workers=min(len(tool_calls), 8)
+                ) as pool:
+                    futures = {
+                        pool.submit(self._execute_tool_call, tc): tc
+                        for tc in tool_calls
+                    }
+                    for future in as_completed(
+                        futures, timeout=self.TOOL_TIMEOUT
+                    ):
+                        tc = futures[future]
+                        try:
+                            results[tc.id] = future.result()
+                        except Exception as exc:
+                            results[tc.id] = f"Error: {exc}"
+                for tc in tool_calls:
+                    if tc.id not in results:
+                        results[tc.id] = (
+                            f"Error: tool '{tc.function.name}' timed out "
+                            f"after {self.TOOL_TIMEOUT}s"
+                        )
                     self.messages.append({
                         "role": "tool",
-                        "tool_call_id": tool_calls[0].id,
-                        "content": result,
+                        "tool_call_id": tc.id,
+                        "content": results[tc.id],
                     })
-                else:
-                    results: dict[str, str] = {}
-                    with ThreadPoolExecutor(
-                        max_workers=min(len(tool_calls), 8)
-                    ) as pool:
-                        futures = {
-                            pool.submit(self._execute_tool_call, tc): tc
-                            for tc in tool_calls
-                        }
-                        for future in as_completed(futures):
-                            tc = futures[future]
-                            try:
-                                results[tc.id] = future.result()
-                            except Exception as exc:
-                                results[tc.id] = f"Error: {exc}"
-                    for tc in tool_calls:
-                        self.messages.append({
-                            "role": "tool",
-                            "tool_call_id": tc.id,
-                            "content": results[tc.id],
-                        })
 
                 for injection in self.pending_injections:
                     self.messages.append(
@@ -1122,6 +1126,16 @@ Don't repeat this if `bot_name` already exists in memory.
                     )
                 self.pending_injections = []
 
+            except FuturesTimeout:
+                logger.warning("Tool execution timed out in stream round %d", tool_rounds)
+                for tc in tool_calls:
+                    if tc.id not in results:
+                        self.messages.append({
+                            "role": "tool",
+                            "tool_call_id": tc.id,
+                            "content": f"Error: timed out after {self.TOOL_TIMEOUT}s",
+                        })
+                continue
             except Exception as exc:
                 logger.exception("Critical error in Agent.chat_stream()")
                 return f"Error: {exc}"

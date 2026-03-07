@@ -32,6 +32,9 @@ from __future__ import annotations
 import asyncio
 import base64
 import logging
+import queue as _queue
+import re
+import time
 from typing import TYPE_CHECKING
 
 from telegram import BotCommand, ReactionTypeEmoji, Update
@@ -212,12 +215,13 @@ class TelegramBot:
         except Exception:
             pass
 
-        # Build multimodal input if photo is present
         chat_input = user_text or ""
         if has_photo:
             chat_input = await self._build_image_input(
                 update, user_text or "What's in this image?"
             )
+
+        token_queue: _queue.Queue[str] = _queue.Queue()
 
         typing_task = asyncio.create_task(
             self._keep_typing(update.message.chat_id)
@@ -225,10 +229,13 @@ class TelegramBot:
         try:
             async with self._sm.acquire(sid):
                 loop = asyncio.get_event_loop()
-                response = await loop.run_in_executor(None, agent.chat, chat_input)
+                future = loop.run_in_executor(
+                    None, agent.chat_stream, chat_input, token_queue.put,
+                )
+                await self._flush_stream(update, token_queue, future)
         except Exception as exc:
-            logger.exception("[Telegram] Agent.chat() raised an exception")
-            response = f"Sorry, something went wrong: {exc}"
+            logger.exception("[Telegram] Agent error")
+            await update.message.reply_text(f"Sorry, something went wrong: {exc}")
         finally:
             typing_task.cancel()
 
@@ -237,8 +244,164 @@ class TelegramBot:
         except Exception:
             pass
 
-        for chunk in _split_message(response or "(no response)"):
-            await update.message.reply_text(chunk)
+    # Max wall-clock time for a single agent invocation (seconds).
+    _AGENT_TIMEOUT = 180
+
+    async def _flush_stream(
+        self,
+        update: Update,
+        token_queue: "_queue.Queue[str]",
+        future: "asyncio.Future[str]",
+    ) -> None:
+        """Progressively stream tokens to Telegram via edit-in-place.
+
+        Uses send-then-edit (like OpenClaw): one live message that gets
+        updated as tokens arrive (~1.5 s throttle).  Tool-call markers
+        produce a short status line and start a fresh message.
+
+        Safeguards against hangs:
+        - **Heartbeat**: if no tokens arrive for 15 s, sends a "still
+          working" notification so the user knows the bot is alive.
+        - **Overall timeout**: after ``_AGENT_TIMEOUT`` seconds the
+          future is abandoned and a timeout message is sent.
+        """
+        buf: list[str] = []
+        live_msg = None
+        live_text = ""
+        sent_any = False
+        THROTTLE = 1.5
+        HEARTBEAT_INTERVAL = 15.0
+        last_edit = time.monotonic()
+        last_token_time = time.monotonic()
+        start_time = time.monotonic()
+        heartbeat_sent = False
+        _MARKER = re.compile(r'`\[calling:\s*([^\]]+)\]`')
+
+        while not future.done():
+            # ── Overall timeout guard ─────────────────────────────────
+            if (time.monotonic() - start_time) > self._AGENT_TIMEOUT:
+                logger.warning(
+                    "[Telegram] Agent timeout after %ds", self._AGENT_TIMEOUT,
+                )
+                try:
+                    await update.message.reply_text(
+                        "\u23f0 The operation timed out. "
+                        "Please try a simpler request."
+                    )
+                except Exception:
+                    pass
+                return
+
+            # ── Drain token queue ─────────────────────────────────────
+            drained = False
+            while True:
+                try:
+                    buf.append(token_queue.get_nowait())
+                    drained = True
+                    last_token_time = time.monotonic()
+                    heartbeat_sent = False
+                except _queue.Empty:
+                    break
+
+            # ── Heartbeat: notify user during long silences ───────────
+            if (
+                not drained
+                and not heartbeat_sent
+                and (time.monotonic() - last_token_time) > HEARTBEAT_INTERVAL
+            ):
+                try:
+                    await update.message.reply_text(
+                        "\u23f3 Still working\u2026"
+                    )
+                except Exception:
+                    pass
+                heartbeat_sent = True
+
+            if not drained:
+                await asyncio.sleep(0.3)
+                continue
+
+            raw = "".join(buf)
+            now = time.monotonic()
+
+            # ── Tool-call marker → status line + new message ──────────
+            marker = _MARKER.search(raw)
+            if marker:
+                before = _clean_response(raw[:marker.start()])
+                if before and before != live_text:
+                    try:
+                        if live_msg:
+                            await live_msg.edit_text(before[:4096])
+                        else:
+                            await update.message.reply_text(before[:4096])
+                    except Exception:
+                        pass
+                live_msg = None
+                live_text = ""
+                tools = marker.group(1)
+                try:
+                    await update.message.reply_text(
+                        f"\U0001f527 {tools}\u2026"
+                    )
+                except Exception:
+                    pass
+                sent_any = True
+                buf = [raw[marker.end():].lstrip()]
+                last_edit = now
+                continue
+
+            # ── Regular text → edit-in-place ──────────────────────────
+            text = _clean_response(raw)
+            if text and text != live_text and (now - last_edit) >= THROTTLE:
+                try:
+                    if live_msg is None:
+                        live_msg = await update.message.reply_text(
+                            text[:4096],
+                        )
+                        live_text = text[:4096]
+                    elif len(text) <= 4096:
+                        await live_msg.edit_text(text)
+                        live_text = text
+                    else:
+                        await live_msg.edit_text(text[:4096])
+                        live_msg = None
+                        live_text = ""
+                        buf = [text[4096:]]
+                    sent_any = True
+                except Exception:
+                    pass
+                last_edit = now
+
+            await asyncio.sleep(0.3)
+
+        # ── Final drain ───────────────────────────────────────────────
+        response = future.result()
+        while True:
+            try:
+                buf.append(token_queue.get_nowait())
+            except _queue.Empty:
+                break
+
+        remaining = _clean_response("".join(buf).strip())
+        if remaining and remaining != live_text:
+            try:
+                if live_msg and len(remaining) <= 4096:
+                    await live_msg.edit_text(remaining)
+                elif live_msg:
+                    await live_msg.edit_text(remaining[:4096])
+                    for chunk in _split_message(remaining[4096:]):
+                        await update.message.reply_text(chunk)
+                else:
+                    for chunk in _split_message(remaining):
+                        await update.message.reply_text(chunk)
+                sent_any = True
+            except Exception:
+                pass
+
+        if not sent_any:
+            text = _clean_response(response or "(no response)")
+            for chunk in _split_message(text):
+                await update.message.reply_text(chunk)
 
     async def _build_image_input(self, update: Update, caption: str) -> list:
         """Download photo and build a multimodal content array."""
@@ -330,14 +493,44 @@ class TelegramBot:
 
 # ── Utility ───────────────────────────────────────────────────────────────────
 
+_LEAKED_TOOL_RE = re.compile(
+    r'<\s*\|?\s*(?:DSML|antml)\s*\|\s*function_calls[^>]*>'
+    r'[\s\S]*?'
+    r'<\s*/\s*\|?\s*(?:DSML|antml)\s*\|\s*function_calls\s*>',
+    re.IGNORECASE,
+)
+
+
+def _clean_response(text: str) -> str:
+    """Strip leaked tool-call XML/DSML markup from LLM output."""
+    text = _LEAKED_TOOL_RE.sub('', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
+
+
 def _split_message(text: str, limit: int = 4096) -> list[str]:
-    """Split a long string into chunks that fit within Telegram's message limit."""
+    """Split text into chunks respecting natural boundaries.
+
+    Tries paragraph breaks first, then newlines, then word boundaries,
+    and only falls back to a hard character cut as a last resort.
+    """
     if len(text) <= limit:
         return [text]
-    chunks = []
+    chunks: list[str] = []
+    min_break = limit // 3
     while text:
-        chunks.append(text[:limit])
-        text = text[limit:]
+        if len(text) <= limit:
+            chunks.append(text)
+            break
+        split_at = text.rfind('\n\n', min_break, limit)
+        if split_at < min_break:
+            split_at = text.rfind('\n', min_break, limit)
+        if split_at < min_break:
+            split_at = text.rfind(' ', min_break, limit)
+        if split_at < min_break:
+            split_at = limit
+        chunks.append(text[:split_at].rstrip())
+        text = text[split_at:].lstrip()
     return chunks
 
 
