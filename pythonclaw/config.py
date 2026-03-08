@@ -209,6 +209,31 @@ def group_context_dir(session_id: str) -> Path:
     return PYTHONCLAW_HOME / "context" / "groups" / safe
 
 
+def files_dir() -> Path:
+    """Return the shared files directory (``~/.pythonclaw/context/files/``)."""
+    d = PYTHONCLAW_HOME / "context" / "files"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def clear_files() -> int:
+    """Delete all files in the shared files directory. Returns count removed."""
+    d = files_dir()
+    count = 0
+    for entry in d.iterdir():
+        try:
+            if entry.is_file():
+                entry.unlink()
+                count += 1
+            elif entry.is_dir():
+                import shutil
+                shutil.rmtree(entry)
+                count += 1
+        except OSError:
+            pass
+    return count
+
+
 def reset() -> None:
     """Clear the cached config (mainly for testing)."""
     global _config, _config_path

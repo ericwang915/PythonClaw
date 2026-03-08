@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pythonclaw"
-version = "0.6.5"
+version = "0.6.6"
 description = "OpenClaw reimagined in pure Python — autonomous AI agent with memory, RAG, skills, web dashboard, and multi-channel support."
 readme = "README.md"
 license = {text = "MIT"}
@@ -36,6 +36,7 @@ dependencies = [
     "pyyaml>=6.0",
     "fastapi>=0.100",
     "uvicorn[standard]>=0.20",
+    "httpx>=0.24",
     "tavily-python",
     "rank-bm25>=0.2",
     "numpy>=1.24",

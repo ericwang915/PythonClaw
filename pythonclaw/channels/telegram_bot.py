@@ -144,7 +144,8 @@ class TelegramBot:
             "  /start          \u2014 show this message\n"
             "  /reset          \u2014 start a fresh session\n"
             "  /status         \u2014 show session info\n"
-            "  /compact [hint] \u2014 compact conversation history"
+            "  /compact [hint] \u2014 compact conversation history\n"
+            "  /clear_files    \u2014 delete all downloaded files"
         )
 
     async def _cmd_reset(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -186,6 +187,13 @@ class TelegramBot:
         for chunk in _split_message(result):
             await update.message.reply_text(chunk)
 
+    async def _cmd_clear_files(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not await self._check_access(update, context):
+            return
+        from .. import config as _cfg
+        count = _cfg.clear_files()
+        await update.message.reply_text(f"Cleared {count} file(s) from the downloads folder.")
+
     # ── Message handler (text + photos) ───────────────────────────────────────
 
     async def _handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -200,6 +208,13 @@ class TelegramBot:
         user_text = self._strip_mention(user_text)
 
         has_photo = bool(update.message.photo)
+        has_voice = bool(update.message.voice or update.message.audio)
+
+        if has_voice:
+            transcript = await self._transcribe_voice(update)
+            if transcript is None:
+                return
+            user_text = transcript
 
         if not user_text and not has_photo:
             return
@@ -229,6 +244,8 @@ class TelegramBot:
         try:
             async with self._sm.acquire(sid):
                 loop = asyncio.get_event_loop()
+                chat_id = update.effective_chat.id
+                self._register_file_sender(loop, chat_id)
                 future = loop.run_in_executor(
                     None, agent.chat_stream, chat_input, token_queue.put,
                 )
@@ -293,21 +310,27 @@ class TelegramBot:
             text = _clean_response(raw)
             now = time.monotonic()
 
-            if text and text != live_text and (now - last_edit) >= THROTTLE:
+            # Only show up to the last paragraph break while streaming;
+            # the trailing incomplete line is held back to avoid flashing
+            # progress narration that will be stripped later.
+            last_break = text.rfind("\n\n")
+            display = text[:last_break].rstrip() if last_break > 0 else ""
+
+            if display and display != live_text and (now - last_edit) >= THROTTLE:
                 try:
                     if live_msg is None:
                         live_msg = await update.message.reply_text(
-                            text[:4096],
+                            display[:4096],
                         )
-                        live_text = text[:4096]
-                    elif len(text) <= 4096:
-                        await live_msg.edit_text(text)
-                        live_text = text
+                        live_text = display[:4096]
+                    elif len(display) <= 4096:
+                        await live_msg.edit_text(display)
+                        live_text = display
                     else:
-                        await live_msg.edit_text(live_text)
+                        await live_msg.edit_text(display[:4096])
                         live_msg = None
                         live_text = ""
-                        buf = [text[len(live_text):] if live_text else text]
+                        buf = [display[4096:] + text[last_break:]]
                     sent_any = True
                 except Exception:
                     pass
@@ -345,6 +368,29 @@ class TelegramBot:
             for chunk in _split_message(text):
                 await update.message.reply_text(chunk)
 
+    def _register_file_sender(self, loop: asyncio.AbstractEventLoop, chat_id: int) -> None:
+        """Register a sync callback so the Agent can send files via Telegram."""
+        from ..core.tools import set_file_sender
+
+        bot_app = self._app
+
+        def _sender(path: str, caption: str = "") -> None:
+            async def _do_send():
+                try:
+                    with open(path, "rb") as f:
+                        await bot_app.bot.send_document(
+                            chat_id=chat_id,
+                            document=f,
+                            caption=caption[:1024] if caption else None,
+                        )
+                except Exception as exc:
+                    logger.warning("[Telegram] send_file failed: %s", exc)
+
+            future = asyncio.run_coroutine_threadsafe(_do_send(), loop)
+            future.result(timeout=60)
+
+        set_file_sender(_sender)
+
     async def _build_image_input(self, update: Update, caption: str) -> list:
         """Download photo and build a multimodal content array."""
         photo = update.message.photo[-1]  # highest resolution
@@ -361,6 +407,37 @@ class TelegramBot:
                 },
             },
         ]
+
+    async def _transcribe_voice(self, update: Update) -> str | None:
+        """Download a voice/audio message and transcribe via Deepgram.
+
+        Returns the transcript text, or sends a hint to the user and
+        returns ``None`` if Deepgram is not configured.
+        """
+        from ..core.stt import no_key_message, transcribe_bytes_async
+
+        voice = update.message.voice or update.message.audio
+        tg_file = await voice.get_file()
+        audio_bytes = bytes(await tg_file.download_as_bytearray())
+        mime = voice.mime_type or "audio/ogg"
+
+        try:
+            transcript = await transcribe_bytes_async(audio_bytes, mime)
+        except Exception as exc:
+            logger.warning("[Telegram] Deepgram transcription failed: %s", exc)
+            await update.message.reply_text(f"Voice transcription failed: {exc}")
+            return None
+
+        if transcript is None:
+            await update.message.reply_text(no_key_message())
+            return None
+
+        if not transcript.strip():
+            await update.message.reply_text("Could not recognise any speech in the audio.")
+            return None
+
+        logger.info("[Telegram] Voice transcribed: %s", transcript[:80])
+        return transcript
 
     async def _keep_typing(self, chat_id: int) -> None:
         """Re-send the 'typing' chat action every 4 s until cancelled."""
@@ -380,6 +457,7 @@ class TelegramBot:
         BotCommand("reset", "Start a fresh session"),
         BotCommand("status", "Show session info"),
         BotCommand("compact", "Compact conversation history"),
+        BotCommand("clear_files", "Delete all downloaded files"),
     ]
 
     def build_application(self) -> Application:
@@ -388,8 +466,10 @@ class TelegramBot:
         app.add_handler(CommandHandler("reset", self._cmd_reset))
         app.add_handler(CommandHandler("status", self._cmd_status))
         app.add_handler(CommandHandler("compact", self._cmd_compact))
+        app.add_handler(CommandHandler("clear_files", self._cmd_clear_files))
         app.add_handler(MessageHandler(
-            (filters.TEXT | filters.PHOTO) & ~filters.COMMAND,
+            (filters.TEXT | filters.PHOTO | filters.VOICE | filters.AUDIO)
+            & ~filters.COMMAND,
             self._handle_message,
         ))
         self._app = app
@@ -443,10 +523,18 @@ _LEAKED_TOOL_RE = re.compile(
 )
 
 
+_PROGRESS_LINE_RE = re.compile(r'\n\n.{0,60}[：:]\s*\n\n')
+
+
 def _clean_response(text: str) -> str:
-    """Strip leaked tool-call XML/DSML markup from LLM output."""
+    """Strip leaked tool-call XML/DSML markup and excess whitespace."""
     text = _LEAKED_TOOL_RE.sub('', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
+    for _ in range(10):
+        cleaned = _PROGRESS_LINE_RE.sub('\n\n', text)
+        if cleaned == text:
+            break
+        text = cleaned
     return text.strip()
 
 

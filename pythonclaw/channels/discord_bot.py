@@ -31,6 +31,7 @@ whitelisted channels).
 
 from __future__ import annotations
 
+import asyncio
 import base64
 import logging
 from typing import TYPE_CHECKING
@@ -142,6 +143,16 @@ class DiscordBot:
                 a.content_type and a.content_type.startswith("image/")
                 for a in message.attachments
             )
+            has_audio = any(
+                a.content_type and a.content_type.startswith("audio/")
+                for a in message.attachments
+            )
+
+            if has_audio and not content:
+                transcript = await self._transcribe_audio(message)
+                if transcript is None:
+                    return
+                content = transcript
 
             if not content and not has_image:
                 return
@@ -156,6 +167,9 @@ class DiscordBot:
             if content.startswith("!compact"):
                 hint = content[len("!compact"):].strip() or None
                 await self._cmd_compact(message, is_dm, hint)
+                return
+            if content.startswith("!clear_files"):
+                await self._cmd_clear_files(message)
                 return
 
             chat_input = content or ""
@@ -188,6 +202,40 @@ class DiscordBot:
                     logger.warning("[Discord] Failed to download attachment %s", att.filename)
         return parts
 
+    # ── Voice / audio handling ─────────────────────────────────────────────────
+
+    @staticmethod
+    async def _transcribe_audio(message: discord.Message) -> str | None:
+        """Download the first audio attachment and transcribe via Deepgram."""
+        from ..core.stt import no_key_message, transcribe_bytes_async
+
+        for att in message.attachments:
+            if att.content_type and att.content_type.startswith("audio/"):
+                try:
+                    data = await att.read()
+                except Exception:
+                    logger.warning("[Discord] Failed to download audio %s", att.filename)
+                    return None
+
+                mime = att.content_type.split(";")[0]
+                try:
+                    transcript = await transcribe_bytes_async(data, mime)
+                except Exception as exc:
+                    logger.warning("[Discord] Deepgram failed: %s", exc)
+                    await message.reply(f"Voice transcription failed: {exc}")
+                    return None
+
+                if transcript is None:
+                    await message.reply(no_key_message())
+                    return None
+                if not transcript.strip():
+                    await message.reply("Could not recognise any speech in the audio.")
+                    return None
+
+                logger.info("[Discord] Audio transcribed: %s", transcript[:80])
+                return transcript
+        return None
+
     # ── Command implementations ───────────────────────────────────────────────
 
     async def _cmd_reset(self, message: discord.Message, is_dm: bool) -> None:
@@ -212,6 +260,11 @@ class DiscordBot:
             f"```"
         )
         await message.reply(status)
+
+    async def _cmd_clear_files(self, message: discord.Message) -> None:
+        from .. import config as _cfg
+        count = _cfg.clear_files()
+        await message.reply(f"Cleared {count} file(s) from the downloads folder.")
 
     async def _cmd_compact(self, message: discord.Message, is_dm: bool, hint: str | None) -> None:
         sid = self._session_id(message.author.id if is_dm else message.channel.id, is_dm)
@@ -240,14 +293,39 @@ class DiscordBot:
         async with message.channel.typing():
             try:
                 async with self._sm.acquire(sid):
-                    import asyncio
                     loop = asyncio.get_event_loop()
+                    self._register_file_sender(loop, message.channel)
                     response = await loop.run_in_executor(None, agent.chat, content)
             except Exception as exc:
                 logger.exception("[Discord] Agent.chat() raised an exception")
                 response = f"Sorry, something went wrong: {exc}"
         for chunk in self._split_message(response or "(no response)"):
             await message.reply(chunk)
+
+    # ── File sending ──────────────────────────────────────────────────────────
+
+    def _register_file_sender(
+        self,
+        loop: asyncio.AbstractEventLoop,
+        channel: discord.abc.Messageable,
+    ) -> None:
+        """Register a sync callback so the Agent can send files via Discord."""
+        from ..core.tools import set_file_sender
+
+        def _sender(path: str, caption: str = "") -> None:
+            async def _do_send():
+                try:
+                    await channel.send(
+                        content=caption[:2000] if caption else None,
+                        file=discord.File(path),
+                    )
+                except Exception as exc:
+                    logger.warning("[Discord] send_file failed: %s", exc)
+
+            future = asyncio.run_coroutine_threadsafe(_do_send(), loop)
+            future.result(timeout=60)
+
+        set_file_sender(_sender)
 
     # ── Lifecycle ─────────────────────────────────────────────────────────────
 

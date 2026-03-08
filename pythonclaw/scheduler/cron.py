@@ -37,6 +37,7 @@ jobs:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -107,8 +108,9 @@ class CronScheduler:
         logger.info("[CronScheduler] Running job '%s' (session='%s')", job_id, session_id)
 
         agent = self._sm.get_or_create(session_id)
+        loop = asyncio.get_event_loop()
         try:
-            response = agent.chat(prompt)
+            response = await loop.run_in_executor(None, agent.chat, prompt)
             logger.info("[CronScheduler] Job '%s' completed.", job_id)
         except Exception as exc:
             logger.exception("[CronScheduler] Job '%s' failed: %s", job_id, exc)

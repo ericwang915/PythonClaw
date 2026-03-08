@@ -133,16 +133,24 @@ def _sanitize_filename(name: str) -> str:
 
 # ── Primitive tool implementations ────────────────────────────────────────────
 
+def _files_dir() -> str:
+    """Return the shared files directory, creating it if needed."""
+    from .. import config as _cfg
+    return str(_cfg.files_dir())
+
+
 def run_command(command: str) -> str:
     """Execute a shell command and return combined stdout/stderr.
 
     The command inherits the project's virtual environment so that
     ``python``, ``pip``, and any installed CLI tools resolve correctly.
+    The working directory is set to ``~/.pythonclaw/context/files/`` so
+    that any files created or downloaded by the command land there.
     """
     try:
         result = subprocess.run(
             command, shell=True, capture_output=True, text=True,
-            timeout=60, env=_venv_env(),
+            timeout=60, env=_venv_env(), cwd=_files_dir(),
         )
         return result.stdout if result.returncode == 0 else f"Error (exit {result.returncode}):\n{result.stderr}"
     except Exception as exc:
@@ -187,11 +195,49 @@ def list_files(path: str = ".") -> str:
         return f"List error: {exc}"
 
 
+_MAX_SEND_FILE_BYTES = 100 * 1024 * 1024  # 100 MB
+
+# Channel-provided callback: send_file_fn(path, caption) → None
+_file_sender: callable | None = None
+
+
+def set_file_sender(fn: callable | None) -> None:
+    """Register a callback for sending files to the current channel."""
+    global _file_sender
+    _file_sender = fn
+
+
+def send_file(path: str, caption: str = "") -> str:
+    """Send a file to the user via the active channel (Telegram/Discord/WhatsApp/Web)."""
+    resolved = os.path.realpath(os.path.abspath(path))
+    if not os.path.isfile(resolved):
+        return f"Error: file not found: {path}"
+
+    size = os.path.getsize(resolved)
+    if size > _MAX_SEND_FILE_BYTES:
+        size_mb = size / (1024 * 1024)
+        return f"Error: file too large ({size_mb:.1f} MB). Maximum allowed is 100 MB."
+
+    if _file_sender is None:
+        return (
+            f"File ready at: {resolved} ({size / 1024:.1f} KB). "
+            "No active channel to send through — user can download it directly."
+        )
+
+    try:
+        _file_sender(resolved, caption)
+        name = os.path.basename(resolved)
+        return f"File '{name}' ({size / 1024:.1f} KB) sent successfully."
+    except Exception as exc:
+        return f"Error sending file: {exc}"
+
+
 AVAILABLE_TOOLS: dict[str, callable] = {
     "run_command": run_command,
     "read_file": read_file,
     "write_file": write_file,
     "list_files": list_files,
+    "send_file": send_file,
 }
 
 
@@ -244,6 +290,15 @@ PRIMITIVE_TOOLS: list[dict] = [
         "List files in a directory. Use to discover available scripts or files.",
         {"path": {"type": "string", "description": "Directory path (defaults to '.').", "default": "."}},
         [],
+    ),
+    _fn(
+        "send_file",
+        "Send a file to the user via the active channel. Max 100 MB. Use when the user asks to download or receive a file.",
+        {
+            "path": {"type": "string", "description": "Absolute or relative path to the file to send."},
+            "caption": {"type": "string", "description": "Optional caption or description for the file.", "default": ""},
+        },
+        ["path"],
     ),
 ]
 

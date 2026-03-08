@@ -12,6 +12,7 @@ Sub-directories created
   context/persona/    — persona .md files
   context/soul/       — SOUL.md identity document
   context/tools/      — TOOLS.md local environment notes
+  context/files/      — downloaded / generated files
 """
 
 from __future__ import annotations
@@ -42,7 +43,7 @@ def init(project_path: str | None = None) -> None:
     if not os.path.exists(templates_dir):
         print("Warning: templates directory not found — using minimal fallbacks.")
 
-    for component in ("memory", "knowledge", "skills", "persona", "soul", "tools"):
+    for component in ("memory", "knowledge", "skills", "persona", "soul", "tools", "files"):
         target = os.path.join(context_dir, component)
         source = os.path.join(templates_dir, component)
 

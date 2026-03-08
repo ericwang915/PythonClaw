@@ -207,6 +207,7 @@ class Agent:
         self.MAX_PARALLEL_SKILLS = config.get_int(
             "agent", "maxParallelSkills", default=5,
         )
+        self._bg_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="agent-bg")
 
         # Memory — with optional global fallback for per-group isolation
         mem_dir = memory_dir or config.get("memory", "dir", env="PYTHONCLAW_MEMORY_DIR")
@@ -342,9 +343,11 @@ You decide which mode fits. Don't announce the mode name.
 - Proactively `remember` user preferences, decisions, key facts.
 - Use `recall` when user references past context.
 - Memory auto-loaded at session start. INDEX.md = curated system info.
+- All downloaded/generated files go in the shared files directory (`~/.pythonclaw/context/files/`). The `run_command` tool uses this as its working directory.
 - NEVER output tool calls as XML or text. Always use the function calling API.
 
 ### Response Guidelines
+- **Language matching**: ALWAYS reply in the SAME language the user used in their message. If the user writes in Chinese, reply in Chinese. If in English, reply in English. Mirror the user's language exactly.
 - Answer the user's question directly and concisely.
 - Keep responses focused — under 300 words when possible. Break long answers into short paragraphs.
 - Do NOT mention what skills or tools you have available, unless explicitly asked.
@@ -798,7 +801,7 @@ Don't repeat this if `bot_name` already exists in memory.
         soft_threshold = int(self.compaction_threshold * 0.8)
 
         if not self._memory_flushed_this_cycle and tokens >= soft_threshold:
-            self._proactive_memory_flush()
+            self._bg_executor.submit(self._proactive_memory_flush)
             self._memory_flushed_this_cycle = True
 
         if tokens < self.compaction_threshold:
@@ -955,7 +958,7 @@ Don't repeat this if `bot_name` already exists in memory.
 
                 t0 = time.monotonic()
                 results: dict[str, str] = {}
-                with ThreadPoolExecutor(max_workers=min(len(tool_calls), 8)) as pool:
+                with ThreadPoolExecutor(max_workers=min(len(tool_calls), 16)) as pool:
                     futures = {
                         pool.submit(self._execute_tool_call, tc): tc
                         for tc in tool_calls
@@ -1101,7 +1104,7 @@ Don't repeat this if `bot_name` already exists in memory.
 
                 results: dict[str, str] = {}
                 with ThreadPoolExecutor(
-                    max_workers=min(len(tool_calls), 8)
+                    max_workers=min(len(tool_calls), 16),
                 ) as pool:
                     futures = {
                         pool.submit(self._execute_tool_call, tc): tc

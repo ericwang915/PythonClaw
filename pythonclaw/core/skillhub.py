@@ -257,6 +257,154 @@ def install_skill(
     return skill_dir
 
 
+# ── Async variants (httpx) ────────────────────────────────────────────────────
+
+async def _api_get_async(path: str, params: dict[str, Any] | None = None) -> dict:
+    """Non-blocking GET request to the ClawHub API using httpx."""
+    import httpx
+
+    url = f"{CLAWHUB_API}{path}"
+    if params:
+        qs = "&".join(
+            f"{k}={urllib.request.quote(str(v))}"
+            for k, v in params.items() if v is not None
+        )
+        if qs:
+            url = f"{url}?{qs}"
+
+    try:
+        async with httpx.AsyncClient(
+            verify=False, timeout=15.0,
+        ) as client:
+            resp = await client.get(
+                url,
+                headers={"User-Agent": "PythonClaw/1.0", "Accept": "application/json"},
+            )
+            resp.raise_for_status()
+            return resp.json()
+    except httpx.HTTPStatusError as exc:
+        body = exc.response.text[:300]
+        logger.warning("ClawHub API error %s: %s", exc.response.status_code, body)
+        raise RuntimeError(
+            f"ClawHub API error ({exc.response.status_code}): {body}"
+        ) from exc
+    except Exception as exc:
+        raise RuntimeError(f"ClawHub request failed: {exc}") from exc
+
+
+async def _download_skill_zip_async(slug: str) -> bytes:
+    """Non-blocking download of the full skill ZIP from ClawHub's Convex CDN."""
+    import httpx
+
+    url = f"{CLAWHUB_DOWNLOAD}?slug={urllib.request.quote(slug)}"
+    try:
+        async with httpx.AsyncClient(
+            verify=False, timeout=30.0,
+        ) as client:
+            resp = await client.get(
+                url, headers={"User-Agent": "PythonClaw/1.0"},
+            )
+            resp.raise_for_status()
+            return resp.content
+    except Exception as exc:
+        raise RuntimeError(
+            f"Failed to download skill '{slug}' from ClawHub: {exc}"
+        ) from exc
+
+
+async def search_async(query: str, *, limit: int = 10) -> list[dict]:
+    """Async version of :func:`search`."""
+    result = await _api_get_async("/search", params={"q": query})
+    data = result.get("data", [])
+    return _normalize(data[:limit])
+
+
+async def browse_async(*, limit: int = 20, sort: str = "score") -> list[dict]:
+    """Async version of :func:`browse`."""
+    endpoint_map = {
+        "score": "/top-downloads",
+        "downloads": "/top-downloads",
+        "composite": "/top-downloads",
+        "stars": "/top-stars",
+        "recent": "/newest",
+        "newest": "/newest",
+        "certified": "/certified",
+    }
+    endpoint = endpoint_map.get(sort, "/top-downloads")
+    result = await _api_get_async(endpoint)
+    data = result.get("data", [])
+    return _normalize(data[:limit])
+
+
+async def verify_api_async() -> dict:
+    """Async version of :func:`verify_api`."""
+    try:
+        result = await _api_get_async("/health")
+        if result.get("ok"):
+            count = result.get("skill_count", "?")
+            return {
+                "ok": True,
+                "message": f"ClawHub API is online ({count} skills available).",
+            }
+        return {"ok": False, "error": "Unexpected response from ClawHub API."}
+    except RuntimeError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+async def install_skill_async(
+    skill_id: str,
+    *,
+    target_dir: str | None = None,
+) -> str:
+    """Async version of :func:`install_skill`.
+
+    Uses httpx for the HTTP download; file extraction is fast local I/O.
+    """
+    if target_dir is None:
+        from .. import config as _cfg
+        target_dir = os.path.join(str(_cfg.PYTHONCLAW_HOME), "context", "skills")
+
+    safe_name = re.sub(r"[^a-zA-Z0-9_-]", "_", skill_id).strip("_") or "imported_skill"
+
+    category = "clawhub"
+    skill_dir = os.path.join(target_dir, category, safe_name)
+    os.makedirs(skill_dir, exist_ok=True)
+
+    raw_zip = await _download_skill_zip_async(skill_id)
+    try:
+        zf = zipfile.ZipFile(io.BytesIO(raw_zip))
+    except zipfile.BadZipFile as exc:
+        raise RuntimeError(
+            f"ClawHub returned invalid ZIP for '{skill_id}'."
+        ) from exc
+
+    for member in zf.namelist():
+        if member.startswith("__MACOSX") or member.startswith("."):
+            continue
+        dest = os.path.join(skill_dir, member)
+        if member.endswith("/"):
+            os.makedirs(dest, exist_ok=True)
+        else:
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            with open(dest, "wb") as f:
+                f.write(zf.read(member))
+
+    if not os.path.exists(os.path.join(skill_dir, "SKILL.md")):
+        logger.warning("No SKILL.md found in ZIP for '%s'", skill_id)
+
+    source_url = f"{CLAWHUB_WEB}/skills/{skill_id}"
+    meta_path = os.path.join(skill_dir, ".clawhub.json")
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump(
+            {"id": skill_id, "source": source_url, "installed_by": "pythonclaw"},
+            f, indent=2,
+        )
+
+    return skill_dir
+
+
+# ── Formatting ────────────────────────────────────────────────────────────────
+
 def format_search_results(results: list[dict]) -> str:
     """Format search results for CLI display."""
     if not results:

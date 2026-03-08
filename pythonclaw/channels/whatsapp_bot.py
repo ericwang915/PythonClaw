@@ -98,6 +98,24 @@ class WhatsAppBot:
             self._locks[session_id] = threading.Lock()
         return self._locks[session_id]
 
+    # ── File sending ──────────────────────────────────────────────────────────
+
+    def _register_file_sender(self, client, wa_id: str) -> None:
+        """Register a sync callback so the Agent can send files via WhatsApp."""
+        from ..core.tools import set_file_sender
+
+        def _sender(path: str, caption: str = "") -> None:
+            try:
+                client.send_document(
+                    to=wa_id,
+                    document=path,
+                    caption=caption[:1024] if caption else None,
+                )
+            except Exception as exc:
+                logger.warning("[WhatsApp] send_file failed: %s", exc)
+
+        set_file_sender(_sender)
+
     # ── Mount on FastAPI ──────────────────────────────────────────────────────
 
     def mount(self, app: "FastAPI") -> None:
@@ -133,6 +151,10 @@ class WhatsAppBot:
 
             text = (msg.text or "").strip()
             has_image = msg.has_media and getattr(msg, "image", None) is not None
+            has_audio = msg.has_media and (
+                getattr(msg, "audio", None) is not None
+                or getattr(msg, "voice", None) is not None
+            )
 
             # Group mention check
             is_group = getattr(msg, "is_group", False)
@@ -144,6 +166,12 @@ class WhatsAppBot:
                     mentioned = bot._phone_id in text
                 if not mentioned:
                     return
+
+            if has_audio and not text:
+                transcript = _transcribe_wa_audio(client, msg)
+                if transcript is None:
+                    return
+                text = transcript
 
             if not text and not has_image:
                 return
@@ -180,6 +208,12 @@ class WhatsAppBot:
                     msg.reply(chunk)
                 return
 
+            if text.lower() == "!clear_files":
+                from .. import config as _cfg
+                count = _cfg.clear_files()
+                msg.reply(f"Cleared {count} file(s) from the downloads folder.")
+                return
+
             # Build input (text or multimodal)
             chat_input = text or "What's in this image?"
             if has_image:
@@ -190,6 +224,8 @@ class WhatsAppBot:
             lock = bot._get_lock(sid)
             if lock.locked():
                 msg.reply("Processing previous message...")
+
+            bot._register_file_sender(client, wa_id)
 
             try:
                 with lock:
@@ -246,6 +282,39 @@ def _build_wa_image_input(client, msg, caption: str) -> list:
     except Exception:
         logger.warning("[WhatsApp] Failed to download image")
         return caption
+
+
+def _transcribe_wa_audio(client, msg) -> str | None:
+    """Download WhatsApp voice/audio and transcribe via Deepgram."""
+    from ..core.stt import no_key_message, transcribe_bytes
+
+    media = getattr(msg, "voice", None) or getattr(msg, "audio", None)
+    if media is None:
+        return None
+
+    try:
+        data = media.download(in_memory=True)
+    except Exception:
+        logger.warning("[WhatsApp] Failed to download audio")
+        return None
+
+    mime = getattr(media, "mime_type", "audio/ogg")
+    try:
+        transcript = transcribe_bytes(data, mime)
+    except Exception as exc:
+        logger.warning("[WhatsApp] Deepgram failed: %s", exc)
+        msg.reply(f"Voice transcription failed: {exc}")
+        return None
+
+    if transcript is None:
+        msg.reply(no_key_message())
+        return None
+    if not transcript.strip():
+        msg.reply("Could not recognise any speech in the audio.")
+        return None
+
+    logger.info("[WhatsApp] Audio transcribed: %s", transcript[:80])
+    return transcript
 
 
 def create_bot(session_manager: "SessionManager") -> WhatsAppBot:

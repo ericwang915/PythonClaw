@@ -96,6 +96,8 @@ def create_app(provider: LLMProvider | None, *, build_provider_fn=None) -> FastA
     app.add_api_route("/api/skillhub/install", _api_marketplace_install, methods=["POST"])
     app.add_api_route("/api/channels", _api_channels_status, methods=["GET"])
     app.add_api_route("/api/channels/restart", _api_channels_restart, methods=["POST"])
+    app.add_api_route("/api/files/clear", _api_clear_files, methods=["POST"])
+    app.add_api_route("/api/files", _api_list_files, methods=["GET"])
     app.add_websocket_route("/ws/chat", _ws_chat)
 
     return app
@@ -520,54 +522,21 @@ async def _api_save_index(request: Request):
 
 async def _api_transcribe(request: Request):
     """Proxy audio to Deepgram STT and return transcript."""
-    import urllib.error
-    import urllib.request
-
-    dg_key = config.get("deepgram", "apiKey", env="DEEPGRAM_API_KEY")
-    if not dg_key:
-        return JSONResponse(
-            {"ok": False, "error": "Deepgram API key not configured. Set it in Config."},
-            status_code=400,
-        )
+    from ..core.stt import no_key_message, transcribe_bytes_async
 
     content_type = request.headers.get("content-type", "audio/webm")
     body = await request.body()
     if not body:
         return JSONResponse({"ok": False, "error": "No audio data received."}, status_code=400)
 
-    url = "https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&detect_language=true"
-    req = urllib.request.Request(
-        url,
-        data=body,
-        headers={
-            "Authorization": f"Token {dg_key}",
-            "Content-Type": content_type,
-        },
-        method="POST",
-    )
-
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            result = json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        err_body = exc.read().decode("utf-8", errors="replace")
-        logger.warning("[Web] Deepgram error %s: %s", exc.code, err_body)
-        return JSONResponse(
-            {"ok": False, "error": f"Deepgram API error ({exc.code})"},
-            status_code=502,
-        )
+        transcript = await transcribe_bytes_async(body, content_type)
     except Exception as exc:
+        logger.warning("[Web] Deepgram error: %s", exc)
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=502)
 
-    try:
-        transcript = (
-            result.get("results", {})
-            .get("channels", [{}])[0]
-            .get("alternatives", [{}])[0]
-            .get("transcript", "")
-        )
-    except (IndexError, KeyError):
-        transcript = ""
+    if transcript is None:
+        return JSONResponse({"ok": False, "error": no_key_message()}, status_code=400)
 
     return {"ok": True, "transcript": transcript}
 
@@ -582,7 +551,7 @@ async def _api_marketplace_search(request: Request):
         if not query:
             return JSONResponse({"ok": False, "error": "Query is required."}, status_code=400)
         limit = int(body.get("limit", 10))
-        results = skillhub.search(query, limit=limit)
+        results = await skillhub.search_async(query, limit=limit)
         return {"ok": True, "results": results}
     except RuntimeError as exc:
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=502)
@@ -597,7 +566,7 @@ async def _api_marketplace_browse(request: Request):
     try:
         limit = int(request.query_params.get("limit", 20))
         sort = request.query_params.get("sort", "score")
-        results = skillhub.browse(limit=limit, sort=sort)
+        results = await skillhub.browse_async(limit=limit, sort=sort)
         return {"ok": True, "results": results}
     except RuntimeError as exc:
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=502)
@@ -615,7 +584,7 @@ async def _api_marketplace_install(request: Request):
         if not skill_id:
             return JSONResponse({"ok": False, "error": "skill_id is required."}, status_code=400)
 
-        path = skillhub.install_skill(skill_id)
+        path = await skillhub.install_skill_async(skill_id)
 
         agent = _get_agent()
         skill_count = 0
@@ -656,7 +625,7 @@ async def _api_marketplace_stats(request: Request):
     from ..core import skillhub
 
     try:
-        result = skillhub.verify_api()
+        result = await skillhub.verify_api_async()
         return result
     except Exception as exc:
         return JSONResponse({"ok": False, "error": str(exc)}, status_code=500)
@@ -775,6 +744,60 @@ def _reload_agent_identity() -> None:
     _agent._init_system_prompt()
 
 
+# ── Files management ──────────────────────────────────────────────────────────
+
+async def _api_clear_files(request: Request):
+    """Delete all downloaded/generated files."""
+    count = config.clear_files()
+    return JSONResponse({"ok": True, "cleared": count})
+
+
+async def _api_list_files(request: Request):
+    """List files in the shared files directory."""
+    d = config.files_dir()
+    files = []
+    for entry in sorted(d.iterdir()):
+        if entry.is_file():
+            files.append({
+                "name": entry.name,
+                "size": entry.stat().st_size,
+                "modified": entry.stat().st_mtime,
+            })
+    return JSONResponse({"files": files, "dir": str(d)})
+
+
+# ── Web file sender ───────────────────────────────────────────────────────────
+
+def _register_web_file_sender(loop: asyncio.AbstractEventLoop, ws: WebSocket) -> None:
+    """Register a sync callback so the Agent can push file-download links to the web UI."""
+    from ..core.tools import set_file_sender
+
+    def _sender(path: str, caption: str = "") -> None:
+        import base64 as _b64
+
+        name = os.path.basename(path)
+        size = os.path.getsize(path)
+        with open(path, "rb") as fh:
+            data = _b64.b64encode(fh.read()).decode()
+
+        async def _push():
+            try:
+                await ws.send_json({
+                    "type": "file",
+                    "filename": name,
+                    "size": size,
+                    "caption": caption,
+                    "data": data,
+                })
+            except Exception as exc:
+                logger.warning("[Web] send_file via WS failed: %s", exc)
+
+        future = asyncio.run_coroutine_threadsafe(_push(), loop)
+        future.result(timeout=60)
+
+    set_file_sender(_sender)
+
+
 # ── WebSocket Chat ────────────────────────────────────────────────────────────
 
 async def _ws_chat(websocket: WebSocket):
@@ -829,6 +852,9 @@ async def _ws_chat(websocket: WebSocket):
                 await websocket.send_json({"type": "thinking", "content": ""})
 
             loop = asyncio.get_event_loop()
+
+            _register_web_file_sender(loop, websocket)
+
             try:
                 token_queue: asyncio.Queue[str | None] = asyncio.Queue()
 
