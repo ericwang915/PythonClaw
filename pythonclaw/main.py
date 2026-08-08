@@ -15,7 +15,7 @@ import argparse
 import asyncio
 import logging
 
-from . import config
+from . import config, __version__
 from .core.persistent_agent import PersistentAgent
 from .core.session_store import SessionStore
 
@@ -406,6 +406,16 @@ def _build_parser() -> argparse.ArgumentParser:
             "Docs: https://github.com/ericwang915/PythonClaw"
         ),
     )
+
+    # version 
+    parser.add_argument(
+    "-V",
+    "--version",
+    action="version",
+    version=f"pythonclaw {__version__}",
+    )
+
+    # config
     parser.add_argument(
         "--config",
         metavar="PATH",
