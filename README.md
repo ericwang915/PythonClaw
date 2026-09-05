@@ -98,7 +98,7 @@ pythonclaw onboard
 | 💾 | **Persistent memory** | Plain-Markdown long-term memory with daily logs and semantic recall — grep-able, backup-able, no database |
 | 🔍 | **Hybrid RAG** | BM25 + dense embeddings + RRF fusion + LLM re-ranking over your own docs |
 | 🌐 | **Web dashboard** | Browser UI for chat, config, skill catalog, identity editing, and marketplace |
-| 🎙️ | **Voice input** | Deepgram speech-to-text in the web and messaging channels |
+| 🎙️ | **Voice input** | Speech-to-text via Deepgram, or **fully local with Whisper** (`stt.provider: "whisper"`) |
 | ⏰ | **Cron jobs** | Schedule tasks in config, or let the agent schedule its own and message you |
 | 📡 | **Multi-channel** | CLI, Web, Telegram, Discord, WhatsApp — one agent behind every front-end |
 
@@ -440,7 +440,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 | Memory | Markdown | Markdown (long-term + daily) |
 | Skills | Plugin system | Three-tier + ClawHub marketplace |
 | Channels | Discord, Telegram, WhatsApp | CLI, Web, Telegram, Discord, WhatsApp |
-| Voice | — | Deepgram STT |
+| Voice | — | Deepgram STT + local Whisper |
 | LLM Providers | OpenAI, Anthropic, Gemini | DeepSeek, Grok, Claude, Gemini, Kimi, GLM + any OpenAI-compatible |
 | Run fully local | — | **Yes — Ollama, no API key** |
 | Deploy | npm | pip · Docker · docker-compose |

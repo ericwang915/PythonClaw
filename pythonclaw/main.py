@@ -406,6 +406,13 @@ def _build_parser() -> argparse.ArgumentParser:
             "Docs: https://github.com/ericwang915/PythonClaw"
         ),
     )
+    from . import __version__
+    parser.add_argument(
+        "--version", "-V",
+        action="version",
+        version=f"pythonclaw {__version__}",
+        help="Show the installed version and exit.",
+    )
     parser.add_argument(
         "--config",
         metavar="PATH",

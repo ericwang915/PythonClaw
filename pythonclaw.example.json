@@ -45,6 +45,14 @@
   "deepgram": {
     "apiKey": ""
   },
+  "stt": {
+    "provider": "deepgram"
+  },
+  "whisper": {
+    "model": "base",
+    "device": "auto",
+    "computeType": "default"
+  },
   "skillhub": {
     "apiKey": ""
   },

@@ -2,6 +2,15 @@
 
 All notable changes to PythonClaw are documented here.
 
+## [0.7.2] — 2026-09-05
+
+### Fixed
+- **Gemini function calling crashed on any tool with a `default` value** — the Gemini `Schema` proto rejects `default`/`additionalProperties`; tool schemas are now sanitized to only the fields Gemini accepts ([#2](https://github.com/ericwang915/PythonClaw/issues/2))
+
+### Added
+- **`pythonclaw --version` / `-V`** flag ([#5](https://github.com/ericwang915/PythonClaw/issues/5))
+- **Local Whisper STT backend** — set `stt.provider: "whisper"` to transcribe voice 100% locally via `faster-whisper`, no API key ([#6](https://github.com/ericwang915/PythonClaw/issues/6))
+
 ## [0.7.1] — 2026-08-08
 
 ### Added

@@ -400,3 +400,97 @@ def test_needs_onboard_honours_env_and_ollama(monkeypatch):
 
     monkeypatch.setattr(config, "_config", {"llm": {"provider": "ollama"}})
     assert onboard.needs_onboard() is False
+
+
+# ── issue #2: Gemini rejects `default` in tool schemas ───────────────────────
+
+def test_gemini_sanitize_schema_strips_unsupported_keys():
+    from pythonclaw.core.llm.gemini_client import GeminiProvider
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "command": {"type": "string", "description": "cmd"},
+            "timeout": {"type": "integer", "description": "s", "default": 120},
+            "topic": {"type": "string", "enum": ["a", "b"], "default": "a"},
+            "tags": {"type": "array", "items": {"type": "string", "default": "x"}},
+            "extra": {"type": "object", "additionalProperties": {"type": "string"}},
+        },
+        "required": ["command"],
+    }
+    clean = GeminiProvider._sanitize_schema(schema)
+
+    def assert_no_default(node):
+        if isinstance(node, dict):
+            assert "default" not in node
+            assert "additionalProperties" not in node
+            for v in node.values():
+                assert_no_default(v)
+
+    assert_no_default(clean)
+    # legitimate keys survive
+    assert clean["properties"]["topic"]["enum"] == ["a", "b"]
+    assert clean["properties"]["tags"]["items"]["type"] == "string"
+    assert clean["required"] == ["command"]
+
+
+def test_gemini_sanitize_schema_handles_none():
+    from pythonclaw.core.llm.gemini_client import GeminiProvider
+    assert GeminiProvider._sanitize_schema(None) is None
+
+
+def test_real_tool_schemas_have_no_default_after_sanitize():
+    from pythonclaw.core.llm.gemini_client import GeminiProvider
+    from pythonclaw.core.tools import PRIMITIVE_TOOLS, WEB_SEARCH_TOOL, MULTI_SEARCH_TOOL
+
+    for tool in [*PRIMITIVE_TOOLS, WEB_SEARCH_TOOL, MULTI_SEARCH_TOOL]:
+        clean = GeminiProvider._sanitize_schema(tool["function"]["parameters"])
+
+        def walk(node):
+            if isinstance(node, dict):
+                assert "default" not in node, tool["function"]["name"]
+                for v in node.values():
+                    walk(v)
+        walk(clean)
+
+
+# ── issue #5: --version flag ─────────────────────────────────────────────────
+
+def test_version_flag(capsys):
+    from pythonclaw import __version__, main
+
+    parser = main._build_parser()
+    with pytest.raises(SystemExit) as exc:
+        parser.parse_args(["--version"])
+    assert exc.value.code == 0
+    assert __version__ in capsys.readouterr().out
+
+
+# ── issue #6: local Whisper STT backend ──────────────────────────────────────
+
+def test_whisper_no_key_message(monkeypatch):
+    from pythonclaw import config
+    from pythonclaw.core import stt
+
+    monkeypatch.setattr(config, "_config", {"stt": {"provider": "whisper"}})
+    msg = stt.no_key_message()
+    assert "faster-whisper" in msg
+
+
+def test_whisper_returns_none_when_package_missing(monkeypatch):
+    from pythonclaw import config
+    from pythonclaw.core import stt
+
+    monkeypatch.setattr(config, "_config", {"stt": {"provider": "whisper"}})
+    monkeypatch.setattr(stt, "_get_whisper_model", lambda: None)
+    # missing package → None (channels then show the install message)
+    assert stt.transcribe_bytes(b"fake-audio") is None
+
+
+def test_default_provider_is_deepgram(monkeypatch):
+    from pythonclaw import config
+    from pythonclaw.core import stt
+
+    monkeypatch.setattr(config, "_config", {})
+    assert stt._get_provider() == "deepgram"
+    assert "Deepgram" in stt.no_key_message()

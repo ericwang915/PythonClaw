@@ -108,7 +108,7 @@ class GeminiProvider(LLMProvider):
                 {
                     "name": t["function"]["name"],
                     "description": t["function"].get("description"),
-                    "parameters": t["function"].get("parameters"),
+                    "parameters": self._sanitize_schema(t["function"].get("parameters")),
                 }
                 for t in tools if t["type"] == "function"
             ]
@@ -204,6 +204,31 @@ class GeminiProvider(LLMProvider):
             else:
                 out.append(str(p))
         return out or [""]
+
+    # Keys the Gemini `Schema` protobuf accepts; anything else (notably
+    # `default` and `additionalProperties`, which JSON Schema allows) makes
+    # generate_content raise `Unknown field for Schema`. See issue #2.
+    _GEMINI_SCHEMA_KEYS = frozenset({
+        "type", "format", "description", "nullable", "enum",
+        "items", "properties", "required",
+    })
+
+    @classmethod
+    def _sanitize_schema(cls, schema):
+        """Recursively drop JSON-Schema keys the Gemini Schema proto rejects."""
+        if not isinstance(schema, dict):
+            return schema
+        out: dict = {}
+        for k, v in schema.items():
+            if k not in cls._GEMINI_SCHEMA_KEYS:
+                continue
+            if k == "properties" and isinstance(v, dict):
+                out[k] = {pk: cls._sanitize_schema(pv) for pk, pv in v.items()}
+            elif k == "items":
+                out[k] = cls._sanitize_schema(v)
+            else:
+                out[k] = v
+        return out
 
     @staticmethod
     def _find_tool_name(messages: list[dict], tool_call_id: str) -> str:
