@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import subprocess
 import sys
 
@@ -180,6 +181,43 @@ def truncate_output(text: str, label: str = "output", limit: int | None = None) 
     return head + note + tail
 
 
+# Scripts run through run_command are often generated on the fly (by the
+# agent or a downloaded skill).  A classic mistake in such code is
+# ``subprocess.Popen(cmd, timeout=N)`` — Popen has no *timeout* parameter,
+# so Python raises ``TypeError: Popen.__init__() got an unexpected keyword
+# argument 'timeout'``.  The only salient word in that message is "timeout",
+# which users read as a network/API timeout and go debugging their LLM key
+# instead of the script (issue #3).
+_POPEN_BAD_KWARG_RE = re.compile(
+    r"Popen\.__init__\(\) got an unexpected keyword argument '([^']+)'"
+)
+
+
+def _script_error_hint(output: str) -> str:
+    """Return an actionable hint for known-confusing errors in script output.
+
+    The hint is appended to the tool result so the model can fix the script
+    on the next round instead of relaying a misleading bare error to the user.
+    Returns an empty string when no known pattern matches.
+    """
+    m = _POPEN_BAD_KWARG_RE.search(output)
+    if not m:
+        return ""
+    kwarg = m.group(1)
+    hint = (
+        f"\n\n[hint] This TypeError comes from the executed script itself — "
+        f"subprocess.Popen() does not accept a `{kwarg}` keyword argument."
+    )
+    if kwarg == "timeout":
+        hint += (
+            " It is NOT a network/API timeout and NOT an LLM key problem. "
+            "Fix the script: use `subprocess.run(cmd, timeout=N)` or "
+            "`proc = subprocess.Popen(cmd); proc.communicate(timeout=N)` "
+            "instead of passing `timeout=` to Popen(), then rerun it."
+        )
+    return hint
+
+
 def run_command(command: str, timeout: int = 120) -> str:
     """Execute a shell command and return combined stdout/stderr.
 
@@ -198,10 +236,13 @@ def run_command(command: str, timeout: int = 120) -> str:
             out = result.stdout
             if result.stderr.strip():
                 out += f"\n[stderr]\n{result.stderr}"
-            return truncate_output(out, label="run_command")
+            # Scripts sometimes swallow the exception and exit 0 — still hint.
+            return truncate_output(
+                out + _script_error_hint(out), label="run_command",
+            )
+        err = f"Error (exit {result.returncode}):\n{result.stderr}\n{result.stdout}"
         return truncate_output(
-            f"Error (exit {result.returncode}):\n{result.stderr}\n{result.stdout}",
-            label="run_command",
+            err + _script_error_hint(err), label="run_command",
         )
     except subprocess.TimeoutExpired:
         return (
