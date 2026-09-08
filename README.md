@@ -270,6 +270,20 @@ LLM_PROVIDER=ollama pythonclaw start       # daemon + web dashboard
 
 Pick a different model with `OLLAMA_MODEL=qwen3`, or point at a remote Ollama with `OLLAMA_BASE_URL=http://gpu-box:11434/v1`.
 
+### Troubleshooting: "timeout" errors after binding your API key
+
+Not every error containing the word *timeout* is an API/network timeout. A common
+case: a script the agent generated (or a downloaded skill) calls
+`subprocess.Popen(cmd, timeout=N)` — `Popen` has no `timeout` parameter, so Python
+raises `TypeError: Popen.__init__() got an unexpected keyword argument 'timeout'`.
+Your API key and connection are fine; the script just needs
+`subprocess.run(cmd, timeout=N)` instead. PythonClaw now detects this and attaches
+a hint to the tool output so the agent fixes the script on the next round.
+
+If you hit a *real* network timeout (request hangs ~300 s, error mentions your
+provider host), check `llm.<provider>.baseUrl` — a missing `/v1` suffix is the
+most common cause — and verify the endpoint answers `curl $BASEURL/models`.
+
 ---
 
 ## Docker
