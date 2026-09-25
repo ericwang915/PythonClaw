@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,9 +13,9 @@
       theme: {
         extend: {
           colors: {
-            brand:   { 50:'#eff6ff', 100:'#dbeafe', 200:'#bfdbfe', 300:'#93c5fd', 400:'#60a5fa', 500:'#3b82f6', 600:'#2563eb', 700:'#1d4ed8', 800:'#1e40af', 900:'#1e3a5f' },
-            surface: { 50:'#f8fafc', 100:'#f1f5f9', 200:'#e2e8f0', 300:'#cbd5e1', 700:'#334155', 750:'#283548', 800:'#1e293b', 850:'#172033', 900:'#0f172a', 950:'#080e1b' },
-            accent:  { green:'#34d399', red:'#f87171', amber:'#fbbf24', purple:'#a78bfa' },
+            brand: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a5f' },
+            surface: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 700: '#334155', 750: '#283548', 800: '#1e293b', 850: '#172033', 900: '#0f172a', 950: '#080e1b' },
+            accent: { green: '#34d399', red: '#f87171', amber: '#fbbf24', purple: '#a78bfa' },
           }
         }
       }
@@ -22,77 +23,214 @@
   </script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    code, pre, .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
-    .fade-in { animation: fadeIn .25s ease-out; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+    /* ADD THIS BLOCK */
+    :root {
+      color-scheme: dark;
+    }
 
-    .chat-scroll::-webkit-scrollbar { width: 5px; }
-    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
-    .chat-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 99px; }
-    .chat-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+    * {
+      box-sizing: border-box;
+    }
 
-    .msg-user { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
-    .msg-bot  { background: #1e293b; border: 1px solid rgba(51,65,85,.6); }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
 
-    .skill-card { transition: all .2s ease; }
-    .skill-card:hover { border-color: #3b82f6; transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(59,130,246,.15); }
+    code,
+    pre,
+    .font-mono {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
 
-    .stat-card { transition: all .2s ease; }
-    .stat-card:hover { border-color: rgba(59,130,246,.3); }
+    .fade-in {
+      animation: fadeIn .25s ease-out;
+    }
 
-    .nav-item { transition: all .15s ease; }
-    .nav-item:hover { background: rgba(30,41,59,.7); }
-    .nav-item.active { background: rgba(37,99,235,.12); color: #60a5fa; border-right: 2px solid #3b82f6; }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px)
+      }
 
-    .pulse-dot { animation: pulseDot 1.4s ease-in-out infinite; }
-    @keyframes pulseDot { 0%,100%{opacity:1} 50%{opacity:.3} }
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .chat-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .chat-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 99px;
+    }
+
+    .chat-scroll::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .msg-user {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    .msg-bot {
+      background: #1e293b;
+      border: 1px solid rgba(51, 65, 85, .6);
+    }
+
+    .skill-card {
+      transition: all .2s ease;
+    }
+
+    .skill-card:hover {
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -5px rgba(59, 130, 246, .15);
+    }
+
+    .stat-card {
+      transition: all .2s ease;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(59, 130, 246, .3);
+    }
+
+    .nav-item {
+      transition: all .15s ease;
+    }
+
+    .nav-item:hover {
+      background: rgba(30, 41, 59, .7);
+    }
+
+    .nav-item.active {
+      background: rgba(37, 99, 235, .12);
+      color: #60a5fa;
+      border-right: 2px solid #3b82f6;
+    }
+
+    .pulse-dot {
+      animation: pulseDot 1.4s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .3
+      }
+    }
 
     .input-field {
-      background: #0f172a; border: 1px solid #334155; border-radius: .5rem;
-      padding: .5rem .75rem; font-size: .8125rem; color: #e2e8f0;
-      transition: border-color .2s; width: 100%; outline: none;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: .5rem;
+      padding: .5rem .75rem;
+      font-size: .8125rem;
+      color: #e2e8f0;
+      transition: border-color .2s;
+      width: 100%;
+      outline: none;
     }
-    .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
-    .input-field::placeholder { color: #475569; }
 
-    select.input-field { appearance: none;
+    .input-field:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, .15);
+    }
+
+    .input-field::placeholder {
+      color: #475569;
+    }
+
+    select.input-field {
+      appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23475569' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right .75rem center; padding-right: 2rem;
+      background-repeat: no-repeat;
+      background-position: right .75rem center;
+      padding-right: 2rem;
     }
 
     .section-card {
-      background: #1e293b; border: 1px solid rgba(51,65,85,.5);
-      border-radius: .75rem; padding: 1.25rem 1.5rem;
+      background: #1e293b;
+      border: 1px solid rgba(51, 65, 85, .5);
+      border-radius: .75rem;
+      padding: 1.25rem 1.5rem;
     }
+
     .cfg-section {
-      padding-bottom: 1.75rem; margin-bottom: 1.75rem;
-      border-bottom: 1px solid rgba(51,65,85,.35);
+      padding-bottom: 1.75rem;
+      margin-bottom: 1.75rem;
+      border-bottom: 1px solid rgba(51, 65, 85, .35);
     }
-    .cfg-section:last-of-type { border-bottom: none; margin-bottom: 0; }
+
+    .cfg-section:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
     .cfg-title {
-      font-size: 1rem; font-weight: 600; color: white;
-      margin-bottom: 1.25rem; letter-spacing: -.01em;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 1.25rem;
+      letter-spacing: -.01em;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white;
-      padding: .5rem 1.5rem; border-radius: .5rem; font-size: .8125rem;
-      font-weight: 500; transition: all .2s; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      padding: .5rem 1.5rem;
+      border-radius: .5rem;
+      font-size: .8125rem;
+      font-weight: 500;
+      transition: all .2s;
+      border: none;
+      cursor: pointer;
     }
-    .btn-primary:hover { box-shadow: 0 4px 15px rgba(37,99,235,.35); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 15px rgba(37, 99, 235, .35);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
 
     .btn-ghost {
-      background: rgba(15,23,42,.6); border: 1px solid #334155; color: #94a3b8;
-      padding: .375rem .75rem; border-radius: .5rem; font-size: .75rem;
-      transition: all .15s; cursor: pointer;
+      background: rgba(15, 23, 42, .6);
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: .375rem .75rem;
+      border-radius: .5rem;
+      font-size: .75rem;
+      transition: all .15s;
+      cursor: pointer;
     }
-    .btn-ghost:hover { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+
+    .btn-ghost:hover {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-color: #475569;
+    }
   </style>
 </head>
+
 <body class="h-full bg-surface-950 text-gray-300 overflow-hidden">
   <div class="flex h-full">
 
@@ -111,24 +249,54 @@
 
       <!-- Navigation -->
       <nav class="flex-1 py-4 px-3 space-y-0.5">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
-          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <button onclick="switchTab('dashboard')" id="nav-dashboard"
+          class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
+          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75"
+            viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+          </svg>
           Dashboard
         </button>
-        <button onclick="switchTab('chat')" id="nav-chat" class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
-          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        <button onclick="switchTab('chat')" id="nav-chat"
+          class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
+          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75"
+            viewBox="0 0 24 24">
+            <path
+              d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+          </svg>
           Chat
         </button>
-        <button onclick="switchTab('skills')" id="nav-skills" class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
-          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <button onclick="switchTab('skills')" id="nav-skills"
+          class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
+          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75"
+            viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
           Skills
         </button>
-        <button onclick="switchTab('marketplace')" id="nav-marketplace" class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
-          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <button onclick="switchTab('marketplace')" id="nav-marketplace"
+          class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
+          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75"
+            viewBox="0 0 24 24">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 01-8 0" />
+          </svg>
           Marketplace
         </button>
-        <button onclick="switchTab('config')" id="nav-config" class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
-          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <button onclick="switchTab('config')" id="nav-config"
+          class="nav-item w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center gap-3 text-gray-400 font-medium">
+          <svg class="w-[18px] h-[18px] shrink-0" fill="none" stroke="currentColor" stroke-width="1.75"
+            viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+          </svg>
           Config
         </button>
       </nav>
@@ -149,7 +317,8 @@
       <header class="h-[48px] bg-surface-950 border-b border-surface-700/30 flex items-center px-8 shrink-0">
         <h1 id="page-title" class="text-sm font-medium text-gray-400 tracking-tight">Dashboard</h1>
         <div class="ml-auto flex items-center gap-3">
-          <span id="header-provider" class="text-[.6875rem] bg-brand-900/30 text-brand-300 px-2.5 py-1 rounded-full font-medium"></span>
+          <span id="header-provider"
+            class="text-[.6875rem] bg-brand-900/30 text-brand-300 px-2.5 py-1 rounded-full font-medium"></span>
         </div>
       </header>
 
@@ -159,15 +328,21 @@
         <!-- ═══ Dashboard Tab ═══ -->
         <div id="tab-dashboard" class="tab-content p-8 fade-in max-w-[1200px]">
           <h2 class="text-xl font-bold text-white tracking-tight mb-6">Dashboard</h2>
-          <div id="dash-banner" class="hidden mb-5 bg-amber-500/10 border border-amber-500/20 rounded-lg px-5 py-3 text-sm text-amber-300 fade-in">
-            <strong>LLM provider not configured.</strong> Go to <a onclick="switchTab('config')" class="underline cursor-pointer text-amber-200 hover:text-white ml-1">Config</a> to set your API key.
+          <div id="dash-banner"
+            class="hidden mb-5 bg-amber-500/10 border border-amber-500/20 rounded-lg px-5 py-3 text-sm text-amber-300 fade-in">
+            <strong>LLM provider not configured.</strong> Go to <a onclick="switchTab('config')"
+              class="underline cursor-pointer text-amber-200 hover:text-white ml-1">Config</a> to set your API key.
           </div>
 
           <!-- Stats Row -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="stat-card section-card flex items-start gap-3.5">
               <div class="w-9 h-9 rounded-lg bg-brand-600/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-4.5 h-4.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+                <svg class="w-4.5 h-4.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
+                </svg>
               </div>
               <div class="min-w-0">
                 <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Provider</div>
@@ -177,7 +352,12 @@
             </div>
             <div class="stat-card section-card flex items-start gap-3.5">
               <div class="w-9 h-9 rounded-lg bg-purple-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-4.5 h-4.5 text-accent-purple" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                <svg class="w-4.5 h-4.5 text-accent-purple" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
               </div>
               <div class="min-w-0">
                 <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Skills</div>
@@ -191,7 +371,11 @@
             </div>
             <div class="stat-card section-card flex items-start gap-3.5">
               <div class="w-9 h-9 rounded-lg bg-emerald-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-4.5 h-4.5 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 6v6l4 2"/></svg>
+                <svg class="w-4.5 h-4.5 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
               </div>
               <div class="min-w-0">
                 <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Memories</div>
@@ -201,7 +385,11 @@
             </div>
             <div class="stat-card section-card flex items-start gap-3.5">
               <div class="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-4.5 h-4.5 text-accent-amber" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <svg class="w-4.5 h-4.5 text-accent-amber" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
               </div>
               <div class="min-w-0">
                 <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Uptime</div>
@@ -211,7 +399,10 @@
             </div>
             <div class="stat-card section-card flex items-start gap-3.5">
               <div class="w-9 h-9 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-4.5 h-4.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                <svg class="w-4.5 h-4.5 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </svg>
               </div>
               <div class="min-w-0">
                 <div class="text-[.6875rem] text-gray-500 font-medium uppercase tracking-wider mb-1">Channels</div>
@@ -226,14 +417,25 @@
             <!-- Soul -->
             <div class="section-card">
               <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                </svg>
                 Soul
-                <span id="soul-badge" class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
-                <button onclick="openIdentityEditor('soul')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]" title="Edit Soul">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span id="soul-badge"
+                  class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
+                <button onclick="openIdentityEditor('soul')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]"
+                  title="Edit Soul">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
                 </button>
               </h3>
-              <div id="soul-content" class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer" onclick="openIdentityEditor('soul')">
+              <div id="soul-content"
+                class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer"
+                onclick="openIdentityEditor('soul')">
                 <span class="text-gray-600 italic">Not configured</span>
               </div>
             </div>
@@ -241,14 +443,25 @@
             <!-- Persona -->
             <div class="section-card">
               <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
                 Persona
-                <span id="persona-badge" class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
-                <button onclick="openIdentityEditor('persona')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]" title="Edit Persona">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span id="persona-badge"
+                  class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
+                <button onclick="openIdentityEditor('persona')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]"
+                  title="Edit Persona">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
                 </button>
               </h3>
-              <div id="persona-content" class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer" onclick="openIdentityEditor('persona')">
+              <div id="persona-content"
+                class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer"
+                onclick="openIdentityEditor('persona')">
                 <span class="text-gray-600 italic">Not configured</span>
               </div>
             </div>
@@ -256,14 +469,25 @@
             <!-- TOOLS.md Local Notes -->
             <div class="section-card">
               <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                </svg>
                 TOOLS.md
-                <span id="tools-badge" class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
-                <button onclick="openIdentityEditor('tools')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]" title="Edit TOOLS.md">
-                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <span id="tools-badge"
+                  class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
+                <button onclick="openIdentityEditor('tools')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]"
+                  title="Edit TOOLS.md">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                  </svg>
                 </button>
               </h3>
-              <div id="tools-content" class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer" onclick="openIdentityEditor('tools')">
+              <div id="tools-content"
+                class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer"
+                onclick="openIdentityEditor('tools')">
                 <span class="text-gray-600 italic">Not configured</span>
               </div>
             </div>
@@ -272,7 +496,10 @@
           <!-- System Status (compact row) -->
           <div class="section-card mb-6">
             <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <svg class="w-4 h-4 text-accent-green" fill="none" stroke="currentColor" stroke-width="1.75"
+                viewBox="0 0 24 24">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+              </svg>
               System Status
             </h3>
             <div class="flex flex-wrap gap-6">
@@ -286,7 +513,8 @@
               </div>
               <div class="flex items-center gap-2">
                 <span class="text-[.75rem] text-gray-400">WebSocket</span>
-                <span id="feat-ws-status" class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
+                <span id="feat-ws-status"
+                  class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
               </div>
             </div>
           </div>
@@ -294,22 +522,38 @@
           <!-- INDEX.md — Curated System Info -->
           <div class="section-card mb-6">
             <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                viewBox="0 0 24 24">
+                <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+              </svg>
               INDEX.md
-              <span id="index-badge" class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
-              <button onclick="openIdentityEditor('index')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]" title="Edit INDEX.md">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              <span id="index-badge"
+                class="px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-gray-800 text-gray-500">--</span>
+              <button onclick="openIdentityEditor('index')" class="ml-auto btn-ghost !px-2 !py-1 text-[.6875rem]"
+                title="Edit INDEX.md">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
               </button>
             </h3>
-            <div id="index-content" class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer" onclick="openIdentityEditor('index')">
-              <span class="text-gray-600 italic">Not configured. Click to add system info, API notes, environment details.</span>
+            <div id="index-content"
+              class="text-[.75rem] text-gray-400 leading-relaxed max-h-[120px] overflow-y-auto chat-scroll cursor-pointer"
+              onclick="openIdentityEditor('index')">
+              <span class="text-gray-600 italic">Not configured. Click to add system info, API notes, environment
+                details.</span>
             </div>
           </div>
 
           <!-- Memory -->
           <div class="section-card mb-6">
             <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 6v6l4 2"/></svg>
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                viewBox="0 0 24 24">
+                <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                <path d="M12 6v6l4 2" />
+              </svg>
               Memory
               <span id="memory-badge" class="text-[.625rem] text-gray-500 font-normal ml-1">0 entries</span>
             </h3>
@@ -323,35 +567,59 @@
             <!-- Tools List -->
             <div class="section-card lg:col-span-2">
               <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+                <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <path
+                    d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                </svg>
                 Available Tools
                 <span id="tools-count" class="text-[.625rem] text-gray-500 font-normal ml-1">0</span>
               </h3>
-              <div id="tools-list" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-[200px] overflow-y-auto chat-scroll">
+              <div id="tools-list"
+                class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-[200px] overflow-y-auto chat-scroll">
               </div>
             </div>
 
             <!-- Quick Actions -->
             <div class="section-card">
               <h3 class="text-[.8125rem] font-semibold text-white mb-3 flex items-center gap-2">
-                <svg class="w-4 h-4 text-accent-amber" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <svg class="w-4 h-4 text-accent-amber" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
                 Quick Actions
               </h3>
               <div class="grid grid-cols-1 gap-2">
                 <button onclick="switchTab('chat')" class="btn-ghost flex items-center gap-2 py-2 px-3 text-left">
-                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path
+                      d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+                  </svg>
                   Open Chat
                 </button>
                 <button onclick="switchTab('skills')" class="btn-ghost flex items-center gap-2 py-2 px-3 text-left">
-                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                  </svg>
                   Browse Skills
                 </button>
                 <button onclick="switchTab('config')" class="btn-ghost flex items-center gap-2 py-2 px-3 text-left">
-                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
                   Settings
                 </button>
                 <button onclick="refreshDashboard()" class="btn-ghost flex items-center gap-2 py-2 px-3 text-left">
-                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                  <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path d="M23 4v6h-6" />
+                    <path d="M1 20v-6h6" />
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                  </svg>
                   Refresh
                 </button>
               </div>
@@ -365,36 +633,43 @@
             <div class="text-center py-16">
               <img src="/static/logo.png" alt="PythonClaw" class="w-14 h-14 mx-auto mb-4 rounded-xl opacity-50">
               <p class="text-gray-500 text-[.8125rem] mb-1">Send a message to start chatting.</p>
-              <p class="text-[.6875rem] text-gray-600">Commands: <code class="text-gray-500">/compact</code> <code class="text-gray-500">/status</code> <code class="text-gray-500">/clear</code></p>
+              <p class="text-[.6875rem] text-gray-600">Commands: <code class="text-gray-500">/compact</code> <code
+                  class="text-gray-500">/status</code> <code class="text-gray-500">/clear</code></p>
             </div>
           </div>
           <div class="border-t border-surface-700/50 px-6 py-4 bg-surface-900/60 backdrop-blur-sm shrink-0">
             <div id="image-preview" class="hidden max-w-[900px] mx-auto mb-2 flex items-center gap-2">
               <img id="image-preview-img" class="h-16 rounded-lg border border-surface-700" alt="preview">
-              <button onclick="clearImageAttachment()" class="text-gray-500 hover:text-white text-xs">&times; Remove</button>
+              <button onclick="clearImageAttachment()" class="text-gray-500 hover:text-white text-xs">&times;
+                Remove</button>
             </div>
             <form id="chat-form" class="flex gap-3 max-w-[900px] mx-auto items-center">
               <input id="chat-input" type="text" placeholder="Type a message..."
-                class="input-field flex-1 !rounded-xl !py-3 !px-4 !bg-surface-950 !text-[.8125rem]"
-                autocomplete="off">
+                class="input-field flex-1 !rounded-xl !py-3 !px-4 !bg-surface-950 !text-[.8125rem]" autocomplete="off">
               <input type="file" id="image-upload" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
               <button type="button" onclick="document.getElementById('image-upload').click()" title="Attach image"
                 class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-800 hover:bg-surface-700 text-gray-400 hover:text-white transition-colors shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <polyline points="21 15 16 10 5 21" />
                 </svg>
               </button>
               <button type="button" id="mic-btn" onclick="toggleMic()" title="Voice input"
                 class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-800 hover:bg-surface-700 text-gray-400 hover:text-white transition-colors shrink-0">
-                <svg id="mic-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                  <line x1="12" y1="19" x2="12" y2="23"/>
-                  <line x1="8" y1="23" x2="16" y2="23"/>
+                <svg id="mic-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                  <line x1="12" y1="19" x2="12" y2="23" />
+                  <line x1="8" y1="23" x2="16" y2="23" />
                 </svg>
               </button>
               <button type="submit" id="chat-send" class="btn-primary !rounded-xl !px-6 !py-3">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M22 2L11 13" />
+                  <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                </svg>
               </button>
             </form>
           </div>
@@ -417,7 +692,9 @@
           <div class="flex items-center justify-between mb-6">
             <div>
               <h2 class="text-xl font-bold text-white tracking-tight">ClawHub Marketplace</h2>
-              <p class="text-sm text-gray-500 mt-1">Search and install community skills from <a href="https://clawhub.com" target="_blank" class="text-brand-400 hover:underline">ClawHub</a> — 13K+ free skills, no API key required</p>
+              <p class="text-sm text-gray-500 mt-1">Search and install community skills from <a
+                  href="https://clawhub.com" target="_blank" class="text-brand-400 hover:underline">ClawHub</a> — 13K+
+                free skills, no API key required</p>
             </div>
           </div>
 
@@ -427,7 +704,10 @@
               class="input-field flex-1 !rounded-xl !py-3 !px-4 !bg-surface-950 text-sm"
               onkeydown="if(event.key==='Enter'){event.preventDefault();marketplaceSearch();}">
             <button onclick="marketplaceSearch()" class="btn-primary !rounded-xl !px-6 !py-3 text-sm font-medium">
-              <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <svg class="w-4 h-4 inline mr-1.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
               Search
             </button>
             <button onclick="marketplaceBrowse()" class="btn-ghost !rounded-xl !px-5 !py-3 text-sm">Browse Top</button>
@@ -497,7 +777,8 @@
             <!-- ClawHub -->
             <div class="cfg-section">
               <h3 class="cfg-title">ClawHub Marketplace</h3>
-              <p class="text-xs text-gray-500">Free & open — no API key required. <a href="https://clawhub.com" target="_blank" class="text-brand-400 hover:underline">clawhub.com</a></p>
+              <p class="text-xs text-gray-500">Free & open — no API key required. <a href="https://clawhub.com"
+                  target="_blank" class="text-brand-400 hover:underline">clawhub.com</a></p>
             </div>
 
             <!-- Deepgram -->
@@ -505,7 +786,8 @@
               <h3 class="cfg-title">Voice Input (Deepgram)</h3>
               <div>
                 <label class="block text-xs text-gray-500 mb-1.5">Deepgram API Key</label>
-                <input id="cfg-deepgram-key" type="password" placeholder="Get one at console.deepgram.com" class="input-field">
+                <input id="cfg-deepgram-key" type="password" placeholder="Get one at console.deepgram.com"
+                  class="input-field">
               </div>
             </div>
 
@@ -558,7 +840,8 @@
                 </div>
                 <div>
                   <label class="block text-xs text-gray-500 mb-1.5">Telegram Allowed Users</label>
-                  <input id="cfg-tg-users" type="text" placeholder="Comma-separated user IDs (blank = allow all)" class="input-field">
+                  <input id="cfg-tg-users" type="text" placeholder="Comma-separated user IDs (blank = allow all)"
+                    class="input-field">
                 </div>
                 <div>
                   <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer mt-2">
@@ -572,7 +855,8 @@
                 </div>
                 <div>
                   <label class="block text-xs text-gray-500 mb-1.5">Discord Allowed Channels</label>
-                  <input id="cfg-dc-channels" type="text" placeholder="Comma-separated channel IDs (blank = allow all)" class="input-field">
+                  <input id="cfg-dc-channels" type="text" placeholder="Comma-separated channel IDs (blank = allow all)"
+                    class="input-field">
                 </div>
                 <div>
                   <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer mt-2">
@@ -594,11 +878,13 @@
                 </div>
                 <div>
                   <label class="block text-xs text-gray-500 mb-1.5">WhatsApp Callback URL</label>
-                  <input id="cfg-wa-callback" type="text" placeholder="https://your-domain/whatsapp/webhook" class="input-field">
+                  <input id="cfg-wa-callback" type="text" placeholder="https://your-domain/whatsapp/webhook"
+                    class="input-field">
                 </div>
                 <div>
                   <label class="block text-xs text-gray-500 mb-1.5">WhatsApp Allowed Numbers</label>
-                  <input id="cfg-wa-numbers" type="text" placeholder="Comma-separated numbers (blank = allow all)" class="input-field">
+                  <input id="cfg-wa-numbers" type="text" placeholder="Comma-separated numbers (blank = allow all)"
+                    class="input-field">
                 </div>
                 <div>
                   <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer mt-2">
@@ -607,7 +893,8 @@
                   </label>
                 </div>
               </div>
-              <p class="text-[.6875rem] text-gray-600 mt-3">Channels auto-start after saving. Tokens are stored securely.</p>
+              <p class="text-[.6875rem] text-gray-600 mt-3">Channels auto-start after saving. Tokens are stored
+                securely.</p>
             </div>
 
             <!-- Agent Settings -->
@@ -639,14 +926,20 @@
 
             <!-- Save -->
             <div class="flex items-center gap-4 mb-8">
-              <button onclick="saveConfig()" id="config-save-btn" class="btn-primary !py-2.5 !px-8">Save & Apply</button>
+              <button onclick="saveConfig()" id="config-save-btn" class="btn-primary !py-2.5 !px-8">Save &
+                Apply</button>
               <span id="config-save-status" class="text-sm text-gray-500"></span>
             </div>
 
             <!-- Advanced JSON -->
             <details class="cfg-section !border-b-0">
-              <summary class="cfg-title cursor-pointer flex items-center gap-2 select-none hover:text-brand-400 transition-colors">
-                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <summary
+                class="cfg-title cursor-pointer flex items-center gap-2 select-none hover:text-brand-400 transition-colors">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.75"
+                  viewBox="0 0 24 24">
+                  <polyline points="16 18 22 12 16 6" />
+                  <polyline points="8 6 2 12 8 18" />
+                </svg>
                 Advanced: Full JSON Editor
               </summary>
               <div class="mt-2">
@@ -661,16 +954,23 @@
   </div>
 
   <!-- Identity Editor Modal -->
-  <div id="identity-modal" class="fixed inset-0 z-50 hidden items-center justify-center" style="background:rgba(0,0,0,.6); backdrop-filter:blur(4px)">
-    <div class="bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[85vh]">
+  <div id="identity-modal" class="fixed inset-0 z-50 hidden items-center justify-center"
+    style="background:rgba(0,0,0,.6); backdrop-filter:blur(4px)">
+    <div
+      class="bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col max-h-[85vh]">
       <div class="flex items-center justify-between px-6 py-4 border-b border-surface-700/50">
         <h3 id="identity-modal-title" class="text-[.9375rem] font-semibold text-white flex items-center gap-2"></h3>
         <button onclick="closeIdentityEditor()" class="text-gray-500 hover:text-white transition-colors p-1">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
       <div class="flex-1 overflow-hidden px-6 py-4">
-        <textarea id="identity-editor" class="input-field !rounded-xl font-mono !text-[.8125rem] !leading-relaxed resize-none w-full h-full min-h-[300px] !p-4" spellcheck="false"></textarea>
+        <textarea id="identity-editor"
+          class="input-field !rounded-xl font-mono !text-[.8125rem] !leading-relaxed resize-none w-full h-full min-h-[300px] !p-4"
+          spellcheck="false"></textarea>
       </div>
       <div class="flex items-center gap-3 px-6 py-4 border-t border-surface-700/50">
         <button onclick="saveIdentity()" id="identity-save-btn" class="btn-primary">Save</button>
@@ -680,155 +980,155 @@
     </div>
   </div>
 
-<script>
-// ── State ────────────────────────────────────────────────────────────────────
-let ws = null;
-let currentTab = 'dashboard';
-let chatWaiting = false;
+  <script>
+    // ── State ────────────────────────────────────────────────────────────────────
+    let ws = null;
+    let currentTab = 'dashboard';
+    let chatWaiting = false;
 
-// ── Tab Switching ────────────────────────────────────────────────────────────
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-  document.querySelectorAll('.nav-item').forEach(el => {
-    el.classList.remove('active');
-  });
+    // ── Tab Switching ────────────────────────────────────────────────────────────
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('active');
+      });
 
-  const panel = document.getElementById('tab-' + tab);
-  panel.classList.remove('hidden');
-  if (tab === 'chat') panel.classList.add('flex', 'flex-col');
+      const panel = document.getElementById('tab-' + tab);
+      panel.classList.remove('hidden');
+      if (tab === 'chat') panel.classList.add('flex', 'flex-col');
 
-  const nav = document.getElementById('nav-' + tab);
-  if (nav) nav.classList.add('active');
+      const nav = document.getElementById('nav-' + tab);
+      if (nav) nav.classList.add('active');
 
-  const titles = { dashboard:'Dashboard', chat:'Chat', skills:'Skill Catalog', marketplace:'ClawHub Marketplace', config:'Configuration' };
-  document.getElementById('page-title').textContent = titles[tab] || tab;
+      const titles = { dashboard: 'Dashboard', chat: 'Chat', skills: 'Skill Catalog', marketplace: 'ClawHub Marketplace', config: 'Configuration' };
+      document.getElementById('page-title').textContent = titles[tab] || tab;
 
-  if (tab === 'dashboard') refreshDashboard();
-  if (tab === 'skills') loadSkills();
-  if (tab === 'marketplace') marketplaceBrowse();
-  if (tab === 'config') loadConfig();
-  if (tab === 'chat') {
-    document.getElementById('chat-input').focus();
-    scrollChat();
-  }
-}
-
-// ── Dashboard ────────────────────────────────────────────────────────────────
-async function refreshDashboard() {
-  try {
-    const res = await fetch('/api/status');
-    const d = await res.json();
-    document.getElementById('stat-provider').textContent = d.providerName || '--';
-    document.getElementById('stat-provider-class').textContent = d.provider || '--';
-    document.getElementById('stat-skills-loaded').textContent = d.skillsLoaded;
-    document.getElementById('stat-skills-total').textContent = d.skillsTotal;
-    document.getElementById('stat-memories').textContent = d.memoryCount;
-    document.getElementById('stat-uptime').textContent = formatUptime(d.uptimeSeconds);
-    document.getElementById('stat-history').textContent = d.historyLength + ' msgs in history';
-    document.getElementById('header-provider').textContent = d.providerName || '';
-    document.getElementById('feat-compactions').textContent = d.compactionCount;
-
-    const wsEl = document.getElementById('feat-websearch');
-    wsEl.textContent = d.webSearchEnabled ? 'Enabled' : 'Disabled';
-    wsEl.className = 'px-2 py-0.5 rounded-full text-[.6875rem] font-medium ' +
-      (d.webSearchEnabled ? 'bg-emerald-500/15 text-accent-green' : 'bg-gray-800 text-gray-500');
-
-    const wsStatusEl = document.getElementById('feat-ws-status');
-    const connected = ws && ws.readyState === WebSocket.OPEN;
-    wsStatusEl.textContent = connected ? 'Connected' : 'Disconnected';
-    wsStatusEl.className = 'px-2 py-0.5 rounded-full text-[.6875rem] font-medium ' +
-      (connected ? 'bg-emerald-500/15 text-accent-green' : 'bg-red-500/15 text-accent-red');
-
-    const banner = document.getElementById('dash-banner');
-    banner.classList.toggle('hidden', d.providerReady !== false);
-  } catch (e) { console.error('Status fetch:', e); }
-
-  try {
-    const chRes = await fetch('/api/channels');
-    const chData = await chRes.json();
-    const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
-    const chEl = document.getElementById('stat-channels');
-    const chDetailEl = document.getElementById('stat-channels-detail');
-    if (running.length > 0) {
-      chEl.textContent = (running.length + 1) + ' active';
-      chDetailEl.textContent = 'web + ' + running.join(', ');
-    } else {
-      chEl.textContent = 'Web only';
-      chDetailEl.textContent = 'web dashboard';
-    }
-  } catch (e) {}
-
-  try {
-    const res2 = await fetch('/api/identity');
-    const id = await res2.json();
-
-    const soulEl = document.getElementById('soul-content');
-    const soulBadge = document.getElementById('soul-badge');
-    if (id.soulConfigured && id.soul) {
-      const lines = id.soul.split('\n').filter(l => l.trim());
-      const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
-      soulEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
-      soulBadge.textContent = 'Active';
-      soulBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
-    } else {
-      soulEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Chat to start onboarding.</span>';
-      soulBadge.textContent = 'Not Set';
-      soulBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
+      if (tab === 'dashboard') refreshDashboard();
+      if (tab === 'skills') loadSkills();
+      if (tab === 'marketplace') marketplaceBrowse();
+      if (tab === 'config') loadConfig();
+      if (tab === 'chat') {
+        document.getElementById('chat-input').focus();
+        scrollChat();
+      }
     }
 
-    const personaEl = document.getElementById('persona-content');
-    const personaBadge = document.getElementById('persona-badge');
-    if (id.personaConfigured && id.persona) {
-      const lines = id.persona.split('\n').filter(l => l.trim());
-      const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
-      personaEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
-      personaBadge.textContent = 'Active';
-      personaBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
-    } else {
-      personaEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Chat to start onboarding.</span>';
-      personaBadge.textContent = 'Not Set';
-      personaBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
-    }
+    // ── Dashboard ────────────────────────────────────────────────────────────────
+    async function refreshDashboard() {
+      try {
+        const res = await fetch('/api/status');
+        const d = await res.json();
+        document.getElementById('stat-provider').textContent = d.providerName || '--';
+        document.getElementById('stat-provider-class').textContent = d.provider || '--';
+        document.getElementById('stat-skills-loaded').textContent = d.skillsLoaded;
+        document.getElementById('stat-skills-total').textContent = d.skillsTotal;
+        document.getElementById('stat-memories').textContent = d.memoryCount;
+        document.getElementById('stat-uptime').textContent = formatUptime(d.uptimeSeconds);
+        document.getElementById('stat-history').textContent = d.historyLength + ' msgs in history';
+        document.getElementById('header-provider').textContent = d.providerName || '';
+        document.getElementById('feat-compactions').textContent = d.compactionCount;
 
-    const toolsNotesEl = document.getElementById('tools-content');
-    const toolsBadge = document.getElementById('tools-badge');
-    if (id.toolsNotesConfigured && id.toolsNotes) {
-      const lines = id.toolsNotes.split('\n').filter(l => l.trim());
-      const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
-      toolsNotesEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
-      toolsBadge.textContent = 'Active';
-      toolsBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
-    } else {
-      toolsNotesEl.innerHTML = '<span class="text-gray-600 italic">No local notes. Click to add environment-specific info.</span>';
-      toolsBadge.textContent = 'Not Set';
-      toolsBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
-    }
+        const wsEl = document.getElementById('feat-websearch');
+        wsEl.textContent = d.webSearchEnabled ? 'Enabled' : 'Disabled';
+        wsEl.className = 'px-2 py-0.5 rounded-full text-[.6875rem] font-medium ' +
+          (d.webSearchEnabled ? 'bg-emerald-500/15 text-accent-green' : 'bg-gray-800 text-gray-500');
 
-    const indexEl = document.getElementById('index-content');
-    const indexBadge = document.getElementById('index-badge');
-    if (id.indexConfigured && id.indexContent) {
-      const lines = id.indexContent.split('\n').filter(l => l.trim());
-      const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
-      indexEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
-      indexBadge.textContent = 'Active';
-      indexBadge.className = 'px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-indigo-500/15 text-indigo-400';
-    } else {
-      indexEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Click to add system info, API notes, environment details.</span>';
-      indexBadge.textContent = 'Not Set';
-      indexBadge.className = 'px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
-    }
+        const wsStatusEl = document.getElementById('feat-ws-status');
+        const connected = ws && ws.readyState === WebSocket.OPEN;
+        wsStatusEl.textContent = connected ? 'Connected' : 'Disconnected';
+        wsStatusEl.className = 'px-2 py-0.5 rounded-full text-[.6875rem] font-medium ' +
+          (connected ? 'bg-emerald-500/15 text-accent-green' : 'bg-red-500/15 text-accent-red');
 
-    const toolsContainer = document.getElementById('tools-list');
-    const toolsCount = document.getElementById('tools-count');
-    if (id.tools && id.tools.length) {
-      toolsCount.textContent = id.tools.length;
-      const groupColors = {
-        Primitive: 'text-brand-400', Skills: 'text-accent-purple',
-        Meta: 'text-rose-400', Memory: 'text-accent-green',
-        Search: 'text-accent-amber', Knowledge: 'text-cyan-400', Cron: 'text-orange-400',
-      };
-      toolsContainer.innerHTML = id.tools.map(t => `
+        const banner = document.getElementById('dash-banner');
+        banner.classList.toggle('hidden', d.providerReady !== false);
+      } catch (e) { console.error('Status fetch:', e); }
+
+      try {
+        const chRes = await fetch('/api/channels');
+        const chData = await chRes.json();
+        const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
+        const chEl = document.getElementById('stat-channels');
+        const chDetailEl = document.getElementById('stat-channels-detail');
+        if (running.length > 0) {
+          chEl.textContent = (running.length + 1) + ' active';
+          chDetailEl.textContent = 'web + ' + running.join(', ');
+        } else {
+          chEl.textContent = 'Web only';
+          chDetailEl.textContent = 'web dashboard';
+        }
+      } catch (e) { }
+
+      try {
+        const res2 = await fetch('/api/identity');
+        const id = await res2.json();
+
+        const soulEl = document.getElementById('soul-content');
+        const soulBadge = document.getElementById('soul-badge');
+        if (id.soulConfigured && id.soul) {
+          const lines = id.soul.split('\n').filter(l => l.trim());
+          const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
+          soulEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
+          soulBadge.textContent = 'Active';
+          soulBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
+        } else {
+          soulEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Chat to start onboarding.</span>';
+          soulBadge.textContent = 'Not Set';
+          soulBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
+        }
+
+        const personaEl = document.getElementById('persona-content');
+        const personaBadge = document.getElementById('persona-badge');
+        if (id.personaConfigured && id.persona) {
+          const lines = id.persona.split('\n').filter(l => l.trim());
+          const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
+          personaEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
+          personaBadge.textContent = 'Active';
+          personaBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
+        } else {
+          personaEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Chat to start onboarding.</span>';
+          personaBadge.textContent = 'Not Set';
+          personaBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
+        }
+
+        const toolsNotesEl = document.getElementById('tools-content');
+        const toolsBadge = document.getElementById('tools-badge');
+        if (id.toolsNotesConfigured && id.toolsNotes) {
+          const lines = id.toolsNotes.split('\n').filter(l => l.trim());
+          const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
+          toolsNotesEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
+          toolsBadge.textContent = 'Active';
+          toolsBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-emerald-500/15 text-accent-green';
+        } else {
+          toolsNotesEl.innerHTML = '<span class="text-gray-600 italic">No local notes. Click to add environment-specific info.</span>';
+          toolsBadge.textContent = 'Not Set';
+          toolsBadge.className = 'ml-auto px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
+        }
+
+        const indexEl = document.getElementById('index-content');
+        const indexBadge = document.getElementById('index-badge');
+        if (id.indexConfigured && id.indexContent) {
+          const lines = id.indexContent.split('\n').filter(l => l.trim());
+          const preview = lines.slice(0, 6).map(l => escapeHtml(l)).join('<br>');
+          indexEl.innerHTML = preview + (lines.length > 6 ? '<br><span class="text-gray-600">...</span>' : '');
+          indexBadge.textContent = 'Active';
+          indexBadge.className = 'px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-indigo-500/15 text-indigo-400';
+        } else {
+          indexEl.innerHTML = '<span class="text-gray-600 italic">Not configured. Click to add system info, API notes, environment details.</span>';
+          indexBadge.textContent = 'Not Set';
+          indexBadge.className = 'px-2 py-0.5 rounded-full text-[.625rem] font-medium bg-amber-500/15 text-accent-amber';
+        }
+
+        const toolsContainer = document.getElementById('tools-list');
+        const toolsCount = document.getElementById('tools-count');
+        if (id.tools && id.tools.length) {
+          toolsCount.textContent = id.tools.length;
+          const groupColors = {
+            Primitive: 'text-brand-400', Skills: 'text-accent-purple',
+            Meta: 'text-rose-400', Memory: 'text-accent-green',
+            Search: 'text-accent-amber', Knowledge: 'text-cyan-400', Cron: 'text-orange-400',
+          };
+          toolsContainer.innerHTML = id.tools.map(t => `
         <div class="flex items-start gap-2 px-2.5 py-1.5 rounded-lg hover:bg-surface-750/50 transition-colors">
           <span class="text-[.625rem] font-medium uppercase tracking-wider ${groupColors[t.group] || 'text-gray-500'} shrink-0 mt-0.5 w-14">${escapeHtml(t.group)}</span>
           <div class="min-w-0">
@@ -837,122 +1137,122 @@ async function refreshDashboard() {
           </div>
         </div>
       `).join('');
-    }
-  } catch (e) { console.error('Identity fetch:', e); }
+        }
+      } catch (e) { console.error('Identity fetch:', e); }
 
-  try {
-    const res3 = await fetch('/api/memories');
-    const mem = await res3.json();
-    const container = document.getElementById('memory-content');
-    const badge = document.getElementById('memory-badge');
-    const entries = mem.memories || {};
-    const keys = Object.keys(entries);
-    badge.textContent = keys.length + ' entries';
+      try {
+        const res3 = await fetch('/api/memories');
+        const mem = await res3.json();
+        const container = document.getElementById('memory-content');
+        const badge = document.getElementById('memory-badge');
+        const entries = mem.memories || {};
+        const keys = Object.keys(entries);
+        badge.textContent = keys.length + ' entries';
 
-    if (keys.length === 0) {
-      container.innerHTML = '<span class="text-[.75rem] text-gray-600 italic">No memories stored yet. Chat with the agent to build memory.</span>';
-    } else {
-      container.innerHTML = '<div class="space-y-2">' + keys.map(k => {
-        const val = escapeHtml(String(entries[k]));
-        const preview = val.length > 200 ? val.substring(0, 200) + '...' : val;
-        return `<div class="px-3 py-2 rounded-lg bg-surface-800/50 border border-surface-700/30">
+        if (keys.length === 0) {
+          container.innerHTML = '<span class="text-[.75rem] text-gray-600 italic">No memories stored yet. Chat with the agent to build memory.</span>';
+        } else {
+          container.innerHTML = '<div class="space-y-2">' + keys.map(k => {
+            const val = escapeHtml(String(entries[k]));
+            const preview = val.length > 200 ? val.substring(0, 200) + '...' : val;
+            return `<div class="px-3 py-2 rounded-lg bg-surface-800/50 border border-surface-700/30">
           <div class="text-[.6875rem] text-cyan-400 font-medium mb-1">${escapeHtml(k)}</div>
           <div class="text-[.75rem] text-gray-400 leading-relaxed whitespace-pre-wrap">${preview}</div>
         </div>`;
-      }).join('') + '</div>';
+          }).join('') + '</div>';
+        }
+      } catch (e) { console.error('Memories fetch:', e); }
     }
-  } catch (e) { console.error('Memories fetch:', e); }
-}
 
-// ── Identity Editor ──────────────────────────────────────────────────────────
-let _identityType = null;
-let _identityRawData = {};
+    // ── Identity Editor ──────────────────────────────────────────────────────────
+    let _identityType = null;
+    let _identityRawData = {};
 
-async function openIdentityEditor(type) {
-  _identityType = type;
-  const modal = document.getElementById('identity-modal');
-  const title = document.getElementById('identity-modal-title');
-  const editor = document.getElementById('identity-editor');
-  const statusEl = document.getElementById('identity-save-status');
-  statusEl.textContent = '';
+    async function openIdentityEditor(type) {
+      _identityType = type;
+      const modal = document.getElementById('identity-modal');
+      const title = document.getElementById('identity-modal-title');
+      const editor = document.getElementById('identity-editor');
+      const statusEl = document.getElementById('identity-save-status');
+      statusEl.textContent = '';
 
-  const icons = {
-    soul: '<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
-    persona: '<svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-    tools: '<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
-  };
-  const labels = { soul: 'Soul', persona: 'Persona', tools: 'TOOLS.md', index: 'INDEX.md' };
-  const icons2 = { ...icons, index: '<svg class="w-4 h-4 text-indigo-400 inline" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>' };
-  title.innerHTML = (icons2[type] || icons[type] || '') + ' Edit ' + labels[type];
+      const icons = {
+        soul: '<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>',
+        persona: '<svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+        tools: '<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+      };
+      const labels = { soul: 'Soul', persona: 'Persona', tools: 'TOOLS.md', index: 'INDEX.md' };
+      const icons2 = { ...icons, index: '<svg class="w-4 h-4 text-indigo-400 inline" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>' };
+      title.innerHTML = (icons2[type] || icons[type] || '') + ' Edit ' + labels[type];
 
-  try {
-    if (type === 'tools') {
-      const res = await fetch('/api/identity/tools');
-      const data = await res.json();
-      editor.value = data.content || defaultToolsTemplate();
-    } else if (type === 'index') {
-      const res = await fetch('/api/memory/index');
-      const data = await res.json();
-      editor.value = data.content || defaultIndexTemplate();
-    } else {
-      const res = await fetch('/api/identity');
-      _identityRawData = await res.json();
-      const content = type === 'soul' ? _identityRawData.soul : _identityRawData.persona;
-      editor.value = content || (type === 'soul' ? defaultSoulTemplate() : defaultPersonaTemplate());
+      try {
+        if (type === 'tools') {
+          const res = await fetch('/api/identity/tools');
+          const data = await res.json();
+          editor.value = data.content || defaultToolsTemplate();
+        } else if (type === 'index') {
+          const res = await fetch('/api/memory/index');
+          const data = await res.json();
+          editor.value = data.content || defaultIndexTemplate();
+        } else {
+          const res = await fetch('/api/identity');
+          _identityRawData = await res.json();
+          const content = type === 'soul' ? _identityRawData.soul : _identityRawData.persona;
+          editor.value = content || (type === 'soul' ? defaultSoulTemplate() : defaultPersonaTemplate());
+        }
+      } catch (e) {
+        editor.value = '';
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      editor.focus();
     }
-  } catch (e) {
-    editor.value = '';
-  }
 
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-  editor.focus();
-}
-
-function closeIdentityEditor() {
-  const modal = document.getElementById('identity-modal');
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
-  _identityType = null;
-}
-
-async function saveIdentity() {
-  if (!_identityType) return;
-  const editor = document.getElementById('identity-editor');
-  const statusEl = document.getElementById('identity-save-status');
-  const btn = document.getElementById('identity-save-btn');
-  const content = editor.value.trim();
-
-  if (!content && !['tools', 'index'].includes(_identityType)) { statusEl.textContent = 'Content cannot be empty.'; statusEl.className = 'text-[.8125rem] text-accent-red ml-2'; return; }
-
-  btn.disabled = true;
-  statusEl.textContent = 'Saving...';
-  statusEl.className = 'text-[.8125rem] text-gray-500 ml-2';
-
-  try {
-    const endpoint = _identityType === 'index' ? '/api/memory/index' : '/api/identity/' + _identityType;
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
-    });
-    const result = await res.json();
-    if (result.ok) {
-      statusEl.textContent = 'Saved! Use /clear in chat to apply.';
-      statusEl.className = 'text-[.8125rem] text-accent-green ml-2';
-      setTimeout(() => { closeIdentityEditor(); refreshDashboard(); }, 1200);
-    } else {
-      statusEl.textContent = 'Error: ' + (result.error || 'Unknown');
-      statusEl.className = 'text-[.8125rem] text-accent-red ml-2';
+    function closeIdentityEditor() {
+      const modal = document.getElementById('identity-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      _identityType = null;
     }
-  } catch (e) {
-    statusEl.textContent = 'Error: ' + e.message;
-    statusEl.className = 'text-[.8125rem] text-accent-red ml-2';
-  } finally { btn.disabled = false; }
-}
 
-function defaultSoulTemplate() {
-  return `# PythonClaw — Soul
+    async function saveIdentity() {
+      if (!_identityType) return;
+      const editor = document.getElementById('identity-editor');
+      const statusEl = document.getElementById('identity-save-status');
+      const btn = document.getElementById('identity-save-btn');
+      const content = editor.value.trim();
+
+      if (!content && !['tools', 'index'].includes(_identityType)) { statusEl.textContent = 'Content cannot be empty.'; statusEl.className = 'text-[.8125rem] text-accent-red ml-2'; return; }
+
+      btn.disabled = true;
+      statusEl.textContent = 'Saving...';
+      statusEl.className = 'text-[.8125rem] text-gray-500 ml-2';
+
+      try {
+        const endpoint = _identityType === 'index' ? '/api/memory/index' : '/api/identity/' + _identityType;
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          statusEl.textContent = 'Saved! Use /clear in chat to apply.';
+          statusEl.className = 'text-[.8125rem] text-accent-green ml-2';
+          setTimeout(() => { closeIdentityEditor(); refreshDashboard(); }, 1200);
+        } else {
+          statusEl.textContent = 'Error: ' + (result.error || 'Unknown');
+          statusEl.className = 'text-[.8125rem] text-accent-red ml-2';
+        }
+      } catch (e) {
+        statusEl.textContent = 'Error: ' + e.message;
+        statusEl.className = 'text-[.8125rem] text-accent-red ml-2';
+      } finally { btn.disabled = false; }
+    }
+
+    function defaultSoulTemplate() {
+      return `# PythonClaw — Soul
 
 You are a PythonClaw agent — an autonomous AI assistant.
 
@@ -969,10 +1269,10 @@ You are a PythonClaw agent — an autonomous AI assistant.
 
 ## Emotional Character
 You are calm, warm, and approachable.`;
-}
+    }
 
-function defaultPersonaTemplate() {
-  return `# PythonClaw — Persona
+    function defaultPersonaTemplate() {
+      return `# PythonClaw — Persona
 
 ## Role
 You are a personal AI assistant.
@@ -987,10 +1287,10 @@ General assistant — help with any topic.
 ## Communication Style
 - Respond clearly and directly
 - Use examples when explaining complex topics`;
-}
+    }
 
-function defaultToolsTemplate() {
-  return `# TOOLS.md — Local Notes
+    function defaultToolsTemplate() {
+      return `# TOOLS.md — Local Notes
 
 Skills define *how* tools work. This file is for *your* specifics.
 
@@ -1013,10 +1313,10 @@ Skills define *how* tools work. This file is for *your* specifics.
 ### Preferences
 - Code style: use type hints
 - Default language: English`;
-}
+    }
 
-function defaultIndexTemplate() {
-  return `# INDEX.md — System Information
+    function defaultIndexTemplate() {
+      return `# INDEX.md — System Information
 
 Curated reference info that the bot always loads at session start.
 Edit this to store common configuration, environment details, and notes.
@@ -1033,58 +1333,58 @@ Edit this to store common configuration, environment details, and notes.
 
 ## Bot Configuration Notes
 - (any agent behavior preferences, response style notes)`;
-}
+    }
 
-// Close modal on Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeIdentityEditor();
-});
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeIdentityEditor();
+    });
 
-// Close modal on backdrop click
-document.getElementById('identity-modal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeIdentityEditor();
-});
+    // Close modal on backdrop click
+    document.getElementById('identity-modal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeIdentityEditor();
+    });
 
-function formatUptime(s) {
-  if (!s && s !== 0) return '--';
-  if (s < 60) return s + 's';
-  if (s < 3600) return Math.floor(s/60) + 'm ' + (s%60) + 's';
-  return Math.floor(s/3600) + 'h ' + Math.floor((s%3600)/60) + 'm';
-}
+    function formatUptime(s) {
+      if (!s && s !== 0) return '--';
+      if (s < 60) return s + 's';
+      if (s < 3600) return Math.floor(s / 60) + 'm ' + (s % 60) + 's';
+      return Math.floor(s / 3600) + 'h ' + Math.floor((s % 3600) / 60) + 'm';
+    }
 
-// ── Skills ───────────────────────────────────────────────────────────────────
-async function loadSkills() {
-  try {
-    const res = await fetch('/api/skills');
-    const data = await res.json();
-    document.getElementById('skills-count').textContent = data.total + ' skills installed';
-    const container = document.getElementById('skills-list');
-    container.innerHTML = '';
+    // ── Skills ───────────────────────────────────────────────────────────────────
+    async function loadSkills() {
+      try {
+        const res = await fetch('/api/skills');
+        const data = await res.json();
+        document.getElementById('skills-count').textContent = data.total + ' skills installed';
+        const container = document.getElementById('skills-list');
+        container.innerHTML = '';
 
-    const categoryIcons = {
-      communication: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
-      data: '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>',
-      dev: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
-      google: '<circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/>',
-      meta: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
-      system: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 0"/>',
-      text: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>',
-      web: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>',
-      productivity: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',
-      media: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
-    };
-    const defaultIcon = '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+        const categoryIcons = {
+          communication: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+          data: '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>',
+          dev: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+          google: '<circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/>',
+          meta: '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+          system: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 0"/>',
+          text: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+          web: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>',
+          productivity: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>',
+          media: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+        };
+        const defaultIcon = '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
 
-    const catMeta = data.categoryMeta || {};
-    for (const [category, skills] of Object.entries(data.categories)) {
-      const catKey = category.toLowerCase();
-      const iconPath = categoryIcons[catKey] || defaultIcon;
-      const meta = catMeta[catKey] || {};
-      const catEmoji = meta.emoji ? meta.emoji + ' ' : '';
-      const catName = meta.name || category;
-      const catDesc = meta.description ? ` — ${escapeHtml(meta.description)}` : '';
-      const section = document.createElement('div');
-      section.innerHTML = `
+        const catMeta = data.categoryMeta || {};
+        for (const [category, skills] of Object.entries(data.categories)) {
+          const catKey = category.toLowerCase();
+          const iconPath = categoryIcons[catKey] || defaultIcon;
+          const meta = catMeta[catKey] || {};
+          const catEmoji = meta.emoji ? meta.emoji + ' ' : '';
+          const catName = meta.name || category;
+          const catDesc = meta.description ? ` — ${escapeHtml(meta.description)}` : '';
+          const section = document.createElement('div');
+          section.innerHTML = `
         <div class="flex items-center gap-2 mb-3">
           <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">${iconPath}</svg>
           <h3 class="text-[.75rem] font-semibold text-gray-400 uppercase tracking-wider">${catEmoji}${escapeHtml(catName)}</h3>
@@ -1104,87 +1404,87 @@ async function loadSkills() {
           }).join('')}
         </div>
       `;
-      container.appendChild(section);
+          container.appendChild(section);
+        }
+      } catch (e) { console.error('Skills fetch:', e); }
     }
-  } catch (e) { console.error('Skills fetch:', e); }
-}
 
-// ── ClawHub Marketplace ──────────────────────────────────────────────────────
-let _shLastResults = [];
+    // ── ClawHub Marketplace ──────────────────────────────────────────────────────
+    let _shLastResults = [];
 
-async function marketplaceSearch() {
-  const query = document.getElementById('sh-search-input').value.trim();
-  if (!query) return;
-  const status = document.getElementById('sh-status');
-  const container = document.getElementById('sh-results');
-  status.textContent = 'Searching ClawHub…';
-  status.classList.remove('hidden');
-  container.innerHTML = '';
+    async function marketplaceSearch() {
+      const query = document.getElementById('sh-search-input').value.trim();
+      if (!query) return;
+      const status = document.getElementById('sh-status');
+      const container = document.getElementById('sh-results');
+      status.textContent = 'Searching ClawHub…';
+      status.classList.remove('hidden');
+      container.innerHTML = '';
 
-  try {
-    const res = await fetch('/api/marketplace/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, limit: 20 }),
-    });
-    const data = await res.json();
-    if (!data.ok) {
-      status.innerHTML = '<span class="text-red-400">Error: ' + _esc(data.error || 'Unknown') + '</span>';
-      return;
+      try {
+        const res = await fetch('/api/marketplace/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, limit: 20 }),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          status.innerHTML = '<span class="text-red-400">Error: ' + _esc(data.error || 'Unknown') + '</span>';
+          return;
+        }
+        _shLastResults = data.results || [];
+        renderMarketplaceResults(_shLastResults);
+        status.textContent = `Found ${_shLastResults.length} skill${_shLastResults.length !== 1 ? 's' : ''}`;
+      } catch (e) {
+        status.innerHTML = '<span class="text-red-400">Network error: ' + _esc(e.message) + '</span>';
+      }
     }
-    _shLastResults = data.results || [];
-    renderMarketplaceResults(_shLastResults);
-    status.textContent = `Found ${_shLastResults.length} skill${_shLastResults.length !== 1 ? 's' : ''}`;
-  } catch (e) {
-    status.innerHTML = '<span class="text-red-400">Network error: ' + _esc(e.message) + '</span>';
-  }
-}
 
-async function marketplaceBrowse() {
-  const status = document.getElementById('sh-status');
-  const container = document.getElementById('sh-results');
-  const sort = document.getElementById('sh-sort')?.value || 'score';
-  const labels = { score: 'top downloaded', stars: 'most starred', newest: 'newest', certified: 'certified' };
-  status.textContent = `Loading ${labels[sort] || 'top'} skills…`;
-  status.classList.remove('hidden');
-  container.innerHTML = '';
+    async function marketplaceBrowse() {
+      const status = document.getElementById('sh-status');
+      const container = document.getElementById('sh-results');
+      const sort = document.getElementById('sh-sort')?.value || 'score';
+      const labels = { score: 'top downloaded', stars: 'most starred', newest: 'newest', certified: 'certified' };
+      status.textContent = `Loading ${labels[sort] || 'top'} skills…`;
+      status.classList.remove('hidden');
+      container.innerHTML = '';
 
-  try {
-    const res = await fetch(`/api/marketplace/browse?limit=20&sort=${sort}`);
-    const data = await res.json();
-    if (!data.ok) {
-      status.innerHTML = '<span class="text-red-400">Error: ' + _esc(data.error || 'Unknown') + '</span>';
-      return;
+      try {
+        const res = await fetch(`/api/marketplace/browse?limit=20&sort=${sort}`);
+        const data = await res.json();
+        if (!data.ok) {
+          status.innerHTML = '<span class="text-red-400">Error: ' + _esc(data.error || 'Unknown') + '</span>';
+          return;
+        }
+        _shLastResults = data.results || [];
+        renderMarketplaceResults(_shLastResults);
+        status.textContent = `Showing ${_shLastResults.length} ${labels[sort] || ''} skills`;
+      } catch (e) {
+        status.innerHTML = '<span class="text-red-400">Network error: ' + _esc(e.message) + '</span>';
+      }
     }
-    _shLastResults = data.results || [];
-    renderMarketplaceResults(_shLastResults);
-    status.textContent = `Showing ${_shLastResults.length} ${labels[sort] || ''} skills`;
-  } catch (e) {
-    status.innerHTML = '<span class="text-red-400">Network error: ' + _esc(e.message) + '</span>';
-  }
-}
 
-function _fmtNum(n) { return typeof n === 'number' ? n.toLocaleString() : String(n || ''); }
+    function _fmtNum(n) { return typeof n === 'number' ? n.toLocaleString() : String(n || ''); }
 
-function renderMarketplaceResults(results) {
-  const container = document.getElementById('sh-results');
-  container.innerHTML = '';
-  if (!results.length) {
-    container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">No results found.</p>';
-    return;
-  }
-  for (const r of results) {
-    const name = r.name || '???';
-    const desc = (r.description || '').substring(0, 140);
-    const sid = r.id || '';
-    const downloads = r.downloads || 0;
-    const stars = r.stars || 0;
-    const author = r.author || '';
-    const certified = r.certified || false;
+    function renderMarketplaceResults(results) {
+      const container = document.getElementById('sh-results');
+      container.innerHTML = '';
+      if (!results.length) {
+        container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">No results found.</p>';
+        return;
+      }
+      for (const r of results) {
+        const name = r.name || '???';
+        const desc = (r.description || '').substring(0, 140);
+        const sid = r.id || '';
+        const downloads = r.downloads || 0;
+        const stars = r.stars || 0;
+        const author = r.author || '';
+        const certified = r.certified || false;
 
-    const card = document.createElement('div');
-    card.className = 'bg-surface-800/60 border border-surface-700/50 rounded-xl p-5 hover:border-brand-500/40 transition-colors';
-    card.innerHTML = `
+        const card = document.createElement('div');
+        card.className = 'bg-surface-800/60 border border-surface-700/50 rounded-xl p-5 hover:border-brand-500/40 transition-colors';
+        card.innerHTML = `
       <div class="flex items-start justify-between gap-3 mb-2">
         <h3 class="font-semibold text-white text-sm">${_esc(name)}</h3>
         <div class="flex items-center gap-2 shrink-0">
@@ -1202,396 +1502,396 @@ function renderMarketplaceResults(results) {
       </div>
       ${sid ? `<div class="mt-2 text-[.6rem] text-gray-600 truncate">ID: ${_esc(sid)}</div>` : ''}
     `;
-    container.appendChild(card);
-  }
-}
-
-function _esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-async function marketplaceInstall(skillId) {
-  if (!confirm(`Install skill "${skillId}" from ClawHub?`)) return;
-  const status = document.getElementById('sh-status');
-  status.textContent = `Installing ${skillId}…`;
-  status.classList.remove('hidden');
-
-  const btn = document.querySelector(`button[onclick="marketplaceInstall('${skillId}')"]`);
-  if (btn) { btn.disabled = true; btn.textContent = 'Installing…'; btn.classList.add('opacity-50'); }
-
-  try {
-    const res = await fetch('/api/marketplace/install', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ skill_id: skillId }),
-    });
-    const data = await res.json();
-    if (data.ok) {
-      const name = data.skill_name || skillId;
-      status.innerHTML = `<span class="text-green-400">✓ Installed &amp; ready!</span> Use in chat: <code class="bg-surface-700 px-1.5 py-0.5 rounded text-brand-400">use_skill("${_esc(name)}")</code>`
-        + (data.skill_count ? ` <span class="text-gray-500 ml-2">(${data.skill_count} skills total)</span>` : '');
-      if (btn) { btn.textContent = '✓ Installed'; btn.classList.replace('bg-brand-500/20', 'bg-green-500/20'); btn.classList.replace('text-brand-400', 'text-green-400'); }
-    } else {
-      status.innerHTML = `<span class="text-red-400">✗ Error:</span> ${_esc(data.error || 'Unknown error')}`;
-      if (btn) { btn.disabled = false; btn.textContent = 'Install'; btn.classList.remove('opacity-50'); }
-    }
-  } catch (e) {
-    status.innerHTML = `<span class="text-red-400">✗ Failed:</span> ${_esc(e.message)}`;
-    if (btn) { btn.disabled = false; btn.textContent = 'Install'; btn.classList.remove('opacity-50'); }
-  }
-}
-
-// ── Config ───────────────────────────────────────────────────────────────────
-let _rawConfig = {};
-let _lastSecretsSet = {};
-
-async function loadConfig() {
-  try {
-    const res = await fetch('/api/config');
-    const data = await res.json();
-    _rawConfig = data.config || {};
-    _lastSecretsSet = data.secretsSet || {};
-
-    document.getElementById('config-path').textContent =
-      data.configPath ? 'Loaded from ' + data.configPath : 'No config file found';
-
-    const banner = document.getElementById('config-banner');
-    if (data.providerReady === false) {
-      banner.className = 'mb-6 rounded-lg px-5 py-3 text-sm bg-amber-500/10 border border-amber-500/20 text-amber-300';
-      banner.innerHTML = '<strong>LLM provider not configured.</strong> Enter your API key and click Save.';
-    } else {
-      banner.className = 'mb-6 rounded-lg px-5 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-300';
-      banner.innerHTML = '<strong>Provider active.</strong> Changes take effect after saving.';
-    }
-    banner.classList.remove('hidden');
-
-    const secretsSet = data.secretsSet || {};
-    const llm = _rawConfig.llm || {};
-    const providerName = llm.provider || 'deepseek';
-    document.getElementById('cfg-provider').value = providerName;
-
-    const providerCfg = llm[providerName] || {};
-    const apiKeyField = document.getElementById('cfg-apikey');
-    const apiKeyPath = 'llm.' + providerName + '.apiKey';
-    apiKeyField.value = '';
-    const isClaudeProvider = providerName === 'claude' || providerName === 'anthropic';
-    if (secretsSet[apiKeyPath]) {
-      apiKeyField.placeholder = '(key is set — leave blank to keep)';
-    } else if (isClaudeProvider) {
-      apiKeyField.placeholder = 'API key (sk-ant-...) or setup-token';
-    } else {
-      apiKeyField.placeholder = 'Enter your API key';
-    }
-
-    document.getElementById('cfg-model').value = providerCfg.model || '';
-    document.getElementById('cfg-baseurl').value = providerCfg.baseUrl || '';
-
-    const tavilyField = document.getElementById('cfg-tavily-key');
-    tavilyField.value = '';
-    tavilyField.placeholder = secretsSet['tavily.apiKey'] ? '(key is set — leave blank to keep)' : 'Get one at app.tavily.com';
-
-    const dgField = document.getElementById('cfg-deepgram-key');
-    dgField.value = '';
-    dgField.placeholder = secretsSet['deepgram.apiKey'] ? '(key is set — leave blank to keep)' : 'Get one at console.deepgram.com';
-
-    const skills = _rawConfig.skills || {};
-    const emailCfg = skills.email || {};
-    document.getElementById('cfg-email-smtp').value = emailCfg.smtpServer || '';
-    document.getElementById('cfg-email-port').value = emailCfg.smtpPort || '';
-    document.getElementById('cfg-email-sender').value = emailCfg.senderEmail || '';
-
-    const emailPwField = document.getElementById('cfg-email-password');
-    emailPwField.value = '';
-    emailPwField.placeholder = secretsSet['skills.email.senderPassword']
-      ? '(password is set — leave blank to keep)' : 'Enter app password';
-
-    const ghTokenField = document.getElementById('cfg-github-token');
-    ghTokenField.value = '';
-    ghTokenField.placeholder = secretsSet['skills.github.token']
-      ? '(token is set — leave blank to keep)' : 'ghp_xxxxxxxxxx';
-
-    const channels = _rawConfig.channels || {};
-    const tgCfg = channels.telegram || {};
-    const tgTokenField = document.getElementById('cfg-tg-token');
-    tgTokenField.value = '';
-    tgTokenField.placeholder = secretsSet['channels.telegram.token'] ? '(token is set — leave blank to keep)' : 'Enter Telegram bot token';
-    document.getElementById('cfg-tg-users').value = (tgCfg.allowedUsers || []).join(', ');
-    document.getElementById('cfg-tg-mention').checked = !!tgCfg.requireMention;
-
-    const dcCfg = channels.discord || {};
-    const dcTokenField = document.getElementById('cfg-dc-token');
-    dcTokenField.value = '';
-    dcTokenField.placeholder = secretsSet['channels.discord.token'] ? '(token is set — leave blank to keep)' : 'Enter Discord bot token';
-    document.getElementById('cfg-dc-channels').value = (dcCfg.allowedChannels || []).join(', ');
-    document.getElementById('cfg-dc-mention').checked = !!dcCfg.requireMention;
-
-    const waCfg = channels.whatsapp || {};
-    document.getElementById('cfg-wa-phone').value = waCfg.phoneNumberId || '';
-    const waTokenField = document.getElementById('cfg-wa-token');
-    waTokenField.value = '';
-    waTokenField.placeholder = secretsSet['channels.whatsapp.token'] ? '(token is set — leave blank to keep)' : 'Enter WhatsApp access token';
-    document.getElementById('cfg-wa-verify').value = waCfg.verifyToken || 'pythonclaw_verify';
-    document.getElementById('cfg-wa-callback').value = waCfg.callbackUrl || '';
-    document.getElementById('cfg-wa-numbers').value = (waCfg.allowedNumbers || []).join(', ');
-    document.getElementById('cfg-wa-mention').checked = !!waCfg.requireMention;
-
-    const agentCfg = _rawConfig.agent || {};
-    document.getElementById('cfg-max-skills').value = agentCfg.maxParallelSkills || 5;
-
-    const web = _rawConfig.web || {};
-    document.getElementById('cfg-web-host').value = web.host || '0.0.0.0';
-    document.getElementById('cfg-web-port').value = web.port || 7788;
-
-    document.getElementById('cfg-json-raw').value = JSON.stringify(_rawConfig, null, 2);
-    document.getElementById('config-save-status').textContent = '';
-
-    // Channel status
-    try {
-      const chRes = await fetch('/api/channels');
-      const chData = await chRes.json();
-      const statusEl = document.getElementById('cfg-channel-status');
-      const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
-      if (running.length > 0) {
-        statusEl.innerHTML = '<span class="text-accent-green">● ' + running.join(', ') + ' running</span>';
-      } else {
-        statusEl.textContent = '';
+        container.appendChild(card);
       }
-    } catch (e) {}
-  } catch (e) { console.error('Config fetch:', e); }
-}
+    }
 
-document.getElementById('cfg-provider').addEventListener('change', () => {
-  const p = document.getElementById('cfg-provider').value;
-  const defaults = {
-    deepseek: { model:'deepseek-chat', baseUrl:'https://api.deepseek.com/v1' },
-    grok:     { model:'grok-3', baseUrl:'https://api.x.ai/v1' },
-    claude:   { model:'claude-sonnet-4-20250514', baseUrl:'' },
-    gemini:   { model:'gemini-2.0-flash', baseUrl:'' },
-    kimi:     { model:'moonshot-v1-128k', baseUrl:'https://api.moonshot.cn/v1' },
-    glm:      { model:'glm-4-flash', baseUrl:'https://open.bigmodel.cn/api/paas/v4/' },
-  };
-  const d = defaults[p] || {};
-  const existing = (_rawConfig.llm || {})[p] || {};
-  document.getElementById('cfg-model').value = existing.model || d.model || '';
-  document.getElementById('cfg-baseurl').value = existing.baseUrl || d.baseUrl || '';
+    function _esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
-  const apiKeyField = document.getElementById('cfg-apikey');
-  const apiKeyPath = 'llm.' + p + '.apiKey';
-  apiKeyField.value = '';
-  apiKeyField.placeholder = (_lastSecretsSet && _lastSecretsSet[apiKeyPath])
-    ? '(key is set — leave blank to keep)' : 'Enter your API key';
-});
+    async function marketplaceInstall(skillId) {
+      if (!confirm(`Install skill "${skillId}" from ClawHub?`)) return;
+      const status = document.getElementById('sh-status');
+      status.textContent = `Installing ${skillId}…`;
+      status.classList.remove('hidden');
 
-async function saveConfig() {
-  const statusEl = document.getElementById('config-save-status');
-  const btn = document.getElementById('config-save-btn');
-  btn.disabled = true;
-  statusEl.textContent = 'Saving...';
-  statusEl.className = 'text-[.8125rem] text-gray-500';
+      const btn = document.querySelector(`button[onclick="marketplaceInstall('${skillId}')"]`);
+      if (btn) { btn.disabled = true; btn.textContent = 'Installing…'; btn.classList.add('opacity-50'); }
 
-  try {
-    const providerName = document.getElementById('cfg-provider').value;
-    const apiKey = document.getElementById('cfg-apikey').value.trim();
-    const model = document.getElementById('cfg-model').value.trim();
-    const baseUrl = document.getElementById('cfg-baseurl').value.trim();
+      try {
+        const res = await fetch('/api/marketplace/install', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ skill_id: skillId }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          const name = data.skill_name || skillId;
+          status.innerHTML = `<span class="text-green-400">✓ Installed &amp; ready!</span> Use in chat: <code class="bg-surface-700 px-1.5 py-0.5 rounded text-brand-400">use_skill("${_esc(name)}")</code>`
+            + (data.skill_count ? ` <span class="text-gray-500 ml-2">(${data.skill_count} skills total)</span>` : '');
+          if (btn) { btn.textContent = '✓ Installed'; btn.classList.replace('bg-brand-500/20', 'bg-green-500/20'); btn.classList.replace('text-brand-400', 'text-green-400'); }
+        } else {
+          status.innerHTML = `<span class="text-red-400">✗ Error:</span> ${_esc(data.error || 'Unknown error')}`;
+          if (btn) { btn.disabled = false; btn.textContent = 'Install'; btn.classList.remove('opacity-50'); }
+        }
+      } catch (e) {
+        status.innerHTML = `<span class="text-red-400">✗ Failed:</span> ${_esc(e.message)}`;
+        if (btn) { btn.disabled = false; btn.textContent = 'Install'; btn.classList.remove('opacity-50'); }
+      }
+    }
 
-    let cfg;
-    try { cfg = JSON.parse(document.getElementById('cfg-json-raw').value); }
-    catch (e) { cfg = Object.assign({}, _rawConfig); }
+    // ── Config ───────────────────────────────────────────────────────────────────
+    let _rawConfig = {};
+    let _lastSecretsSet = {};
 
-    if (!cfg.llm) cfg.llm = {};
-    cfg.llm.provider = providerName;
-    if (!cfg.llm[providerName]) cfg.llm[providerName] = {};
-    if (apiKey) cfg.llm[providerName].apiKey = apiKey;
-    if (model) cfg.llm[providerName].model = model;
-    if (baseUrl) cfg.llm[providerName].baseUrl = baseUrl;
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        _rawConfig = data.config || {};
+        _lastSecretsSet = data.secretsSet || {};
 
-    const tavilyKey = document.getElementById('cfg-tavily-key').value.trim();
-    if (!cfg.tavily) cfg.tavily = {};
-    if (tavilyKey) cfg.tavily.apiKey = tavilyKey;
+        document.getElementById('config-path').textContent =
+          data.configPath ? 'Loaded from ' + data.configPath : 'No config file found';
 
-    const dgKey = document.getElementById('cfg-deepgram-key').value.trim();
-    if (!cfg.deepgram) cfg.deepgram = {};
-    if (dgKey) cfg.deepgram.apiKey = dgKey;
+        const banner = document.getElementById('config-banner');
+        if (data.providerReady === false) {
+          banner.className = 'mb-6 rounded-lg px-5 py-3 text-sm bg-amber-500/10 border border-amber-500/20 text-amber-300';
+          banner.innerHTML = '<strong>LLM provider not configured.</strong> Enter your API key and click Save.';
+        } else {
+          banner.className = 'mb-6 rounded-lg px-5 py-3 text-sm bg-emerald-500/10 border border-emerald-500/20 text-emerald-300';
+          banner.innerHTML = '<strong>Provider active.</strong> Changes take effect after saving.';
+        }
+        banner.classList.remove('hidden');
 
-    if (!cfg.skills) cfg.skills = {};
-    if (!cfg.skills.email) cfg.skills.email = {};
-    const emailSmtp = document.getElementById('cfg-email-smtp').value.trim();
-    const emailPort = document.getElementById('cfg-email-port').value.trim();
-    const emailSender = document.getElementById('cfg-email-sender').value.trim();
-    const emailPassword = document.getElementById('cfg-email-password').value.trim();
-    if (emailSmtp) cfg.skills.email.smtpServer = emailSmtp;
-    if (emailPort) cfg.skills.email.smtpPort = parseInt(emailPort);
-    if (emailSender) cfg.skills.email.senderEmail = emailSender;
-    if (emailPassword) cfg.skills.email.senderPassword = emailPassword;
+        const secretsSet = data.secretsSet || {};
+        const llm = _rawConfig.llm || {};
+        const providerName = llm.provider || 'deepseek';
+        document.getElementById('cfg-provider').value = providerName;
 
-    if (!cfg.skills.github) cfg.skills.github = {};
-    const ghToken = document.getElementById('cfg-github-token').value.trim();
-    if (ghToken) cfg.skills.github.token = ghToken;
+        const providerCfg = llm[providerName] || {};
+        const apiKeyField = document.getElementById('cfg-apikey');
+        const apiKeyPath = 'llm.' + providerName + '.apiKey';
+        apiKeyField.value = '';
+        const isClaudeProvider = providerName === 'claude' || providerName === 'anthropic';
+        if (secretsSet[apiKeyPath]) {
+          apiKeyField.placeholder = '(key is set — leave blank to keep)';
+        } else if (isClaudeProvider) {
+          apiKeyField.placeholder = 'API key (sk-ant-...) or setup-token';
+        } else {
+          apiKeyField.placeholder = 'Enter your API key';
+        }
 
-    if (!cfg.channels) cfg.channels = {};
-    if (!cfg.channels.telegram) cfg.channels.telegram = {};
-    const tgToken = document.getElementById('cfg-tg-token').value.trim();
-    if (tgToken) cfg.channels.telegram.token = tgToken;
-    const tgUsers = document.getElementById('cfg-tg-users').value.trim();
-    cfg.channels.telegram.allowedUsers = tgUsers ? tgUsers.split(',').map(s => s.trim()).filter(Boolean) : [];
-    cfg.channels.telegram.requireMention = document.getElementById('cfg-tg-mention').checked;
+        document.getElementById('cfg-model').value = providerCfg.model || '';
+        document.getElementById('cfg-baseurl').value = providerCfg.baseUrl || '';
 
-    if (!cfg.channels.discord) cfg.channels.discord = {};
-    const dcToken = document.getElementById('cfg-dc-token').value.trim();
-    if (dcToken) cfg.channels.discord.token = dcToken;
-    const dcChannels = document.getElementById('cfg-dc-channels').value.trim();
-    cfg.channels.discord.allowedChannels = dcChannels ? dcChannels.split(',').map(s => s.trim()).filter(Boolean) : [];
-    cfg.channels.discord.requireMention = document.getElementById('cfg-dc-mention').checked;
+        const tavilyField = document.getElementById('cfg-tavily-key');
+        tavilyField.value = '';
+        tavilyField.placeholder = secretsSet['tavily.apiKey'] ? '(key is set — leave blank to keep)' : 'Get one at app.tavily.com';
 
-    if (!cfg.channels.whatsapp) cfg.channels.whatsapp = {};
-    const waPhone = document.getElementById('cfg-wa-phone').value.trim();
-    if (waPhone) cfg.channels.whatsapp.phoneNumberId = waPhone;
-    const waToken = document.getElementById('cfg-wa-token').value.trim();
-    if (waToken) cfg.channels.whatsapp.token = waToken;
-    cfg.channels.whatsapp.verifyToken = document.getElementById('cfg-wa-verify').value.trim() || 'pythonclaw_verify';
-    const waCallback = document.getElementById('cfg-wa-callback').value.trim();
-    if (waCallback) cfg.channels.whatsapp.callbackUrl = waCallback;
-    const waNumbers = document.getElementById('cfg-wa-numbers').value.trim();
-    cfg.channels.whatsapp.allowedNumbers = waNumbers ? waNumbers.split(',').map(s => s.trim()).filter(Boolean) : [];
-    cfg.channels.whatsapp.requireMention = document.getElementById('cfg-wa-mention').checked;
+        const dgField = document.getElementById('cfg-deepgram-key');
+        dgField.value = '';
+        dgField.placeholder = secretsSet['deepgram.apiKey'] ? '(key is set — leave blank to keep)' : 'Get one at console.deepgram.com';
 
-    if (!cfg.agent) cfg.agent = {};
-    cfg.agent.maxParallelSkills = parseInt(document.getElementById('cfg-max-skills').value) || 5;
+        const skills = _rawConfig.skills || {};
+        const emailCfg = skills.email || {};
+        document.getElementById('cfg-email-smtp').value = emailCfg.smtpServer || '';
+        document.getElementById('cfg-email-port').value = emailCfg.smtpPort || '';
+        document.getElementById('cfg-email-sender').value = emailCfg.senderEmail || '';
 
-    if (!cfg.web) cfg.web = {};
-    cfg.web.host = document.getElementById('cfg-web-host').value.trim() || '0.0.0.0';
-    cfg.web.port = parseInt(document.getElementById('cfg-web-port').value) || 7788;
+        const emailPwField = document.getElementById('cfg-email-password');
+        emailPwField.value = '';
+        emailPwField.placeholder = secretsSet['skills.email.senderPassword']
+          ? '(password is set — leave blank to keep)' : 'Enter app password';
 
-    const res = await fetch('/api/config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ config: cfg }),
+        const ghTokenField = document.getElementById('cfg-github-token');
+        ghTokenField.value = '';
+        ghTokenField.placeholder = secretsSet['skills.github.token']
+          ? '(token is set — leave blank to keep)' : 'ghp_xxxxxxxxxx';
+
+        const channels = _rawConfig.channels || {};
+        const tgCfg = channels.telegram || {};
+        const tgTokenField = document.getElementById('cfg-tg-token');
+        tgTokenField.value = '';
+        tgTokenField.placeholder = secretsSet['channels.telegram.token'] ? '(token is set — leave blank to keep)' : 'Enter Telegram bot token';
+        document.getElementById('cfg-tg-users').value = (tgCfg.allowedUsers || []).join(', ');
+        document.getElementById('cfg-tg-mention').checked = !!tgCfg.requireMention;
+
+        const dcCfg = channels.discord || {};
+        const dcTokenField = document.getElementById('cfg-dc-token');
+        dcTokenField.value = '';
+        dcTokenField.placeholder = secretsSet['channels.discord.token'] ? '(token is set — leave blank to keep)' : 'Enter Discord bot token';
+        document.getElementById('cfg-dc-channels').value = (dcCfg.allowedChannels || []).join(', ');
+        document.getElementById('cfg-dc-mention').checked = !!dcCfg.requireMention;
+
+        const waCfg = channels.whatsapp || {};
+        document.getElementById('cfg-wa-phone').value = waCfg.phoneNumberId || '';
+        const waTokenField = document.getElementById('cfg-wa-token');
+        waTokenField.value = '';
+        waTokenField.placeholder = secretsSet['channels.whatsapp.token'] ? '(token is set — leave blank to keep)' : 'Enter WhatsApp access token';
+        document.getElementById('cfg-wa-verify').value = waCfg.verifyToken || 'pythonclaw_verify';
+        document.getElementById('cfg-wa-callback').value = waCfg.callbackUrl || '';
+        document.getElementById('cfg-wa-numbers').value = (waCfg.allowedNumbers || []).join(', ');
+        document.getElementById('cfg-wa-mention').checked = !!waCfg.requireMention;
+
+        const agentCfg = _rawConfig.agent || {};
+        document.getElementById('cfg-max-skills').value = agentCfg.maxParallelSkills || 5;
+
+        const web = _rawConfig.web || {};
+        document.getElementById('cfg-web-host').value = web.host || '0.0.0.0';
+        document.getElementById('cfg-web-port').value = web.port || 7788;
+
+        document.getElementById('cfg-json-raw').value = JSON.stringify(_rawConfig, null, 2);
+        document.getElementById('config-save-status').textContent = '';
+
+        // Channel status
+        try {
+          const chRes = await fetch('/api/channels');
+          const chData = await chRes.json();
+          const statusEl = document.getElementById('cfg-channel-status');
+          const running = (chData.channels || []).filter(c => c.running).map(c => c.type);
+          if (running.length > 0) {
+            statusEl.innerHTML = '<span class="text-accent-green">● ' + running.join(', ') + ' running</span>';
+          } else {
+            statusEl.textContent = '';
+          }
+        } catch (e) { }
+      } catch (e) { console.error('Config fetch:', e); }
+    }
+
+    document.getElementById('cfg-provider').addEventListener('change', () => {
+      const p = document.getElementById('cfg-provider').value;
+      const defaults = {
+        deepseek: { model: 'deepseek-chat', baseUrl: 'https://api.deepseek.com/v1' },
+        grok: { model: 'grok-3', baseUrl: 'https://api.x.ai/v1' },
+        claude: { model: 'claude-sonnet-4-20250514', baseUrl: '' },
+        gemini: { model: 'gemini-2.0-flash', baseUrl: '' },
+        kimi: { model: 'moonshot-v1-128k', baseUrl: 'https://api.moonshot.cn/v1' },
+        glm: { model: 'glm-4-flash', baseUrl: 'https://open.bigmodel.cn/api/paas/v4/' },
+      };
+      const d = defaults[p] || {};
+      const existing = (_rawConfig.llm || {})[p] || {};
+      document.getElementById('cfg-model').value = existing.model || d.model || '';
+      document.getElementById('cfg-baseurl').value = existing.baseUrl || d.baseUrl || '';
+
+      const apiKeyField = document.getElementById('cfg-apikey');
+      const apiKeyPath = 'llm.' + p + '.apiKey';
+      apiKeyField.value = '';
+      apiKeyField.placeholder = (_lastSecretsSet && _lastSecretsSet[apiKeyPath])
+        ? '(key is set — leave blank to keep)' : 'Enter your API key';
     });
-    const result = await res.json();
 
-    if (result.ok) {
-      statusEl.textContent = result.providerReady ? 'Saved! Provider is active.' : 'Saved! Provider could not start — check your API key.';
-      statusEl.className = 'text-[.8125rem] ' + (result.providerReady ? 'text-accent-green' : 'text-accent-amber');
-      loadConfig();
-      refreshDashboard();
-    } else {
-      statusEl.textContent = 'Error: ' + (result.error || 'Unknown');
-      statusEl.className = 'text-[.8125rem] text-accent-red';
+    async function saveConfig() {
+      const statusEl = document.getElementById('config-save-status');
+      const btn = document.getElementById('config-save-btn');
+      btn.disabled = true;
+      statusEl.textContent = 'Saving...';
+      statusEl.className = 'text-[.8125rem] text-gray-500';
+
+      try {
+        const providerName = document.getElementById('cfg-provider').value;
+        const apiKey = document.getElementById('cfg-apikey').value.trim();
+        const model = document.getElementById('cfg-model').value.trim();
+        const baseUrl = document.getElementById('cfg-baseurl').value.trim();
+
+        let cfg;
+        try { cfg = JSON.parse(document.getElementById('cfg-json-raw').value); }
+        catch (e) { cfg = Object.assign({}, _rawConfig); }
+
+        if (!cfg.llm) cfg.llm = {};
+        cfg.llm.provider = providerName;
+        if (!cfg.llm[providerName]) cfg.llm[providerName] = {};
+        if (apiKey) cfg.llm[providerName].apiKey = apiKey;
+        if (model) cfg.llm[providerName].model = model;
+        if (baseUrl) cfg.llm[providerName].baseUrl = baseUrl;
+
+        const tavilyKey = document.getElementById('cfg-tavily-key').value.trim();
+        if (!cfg.tavily) cfg.tavily = {};
+        if (tavilyKey) cfg.tavily.apiKey = tavilyKey;
+
+        const dgKey = document.getElementById('cfg-deepgram-key').value.trim();
+        if (!cfg.deepgram) cfg.deepgram = {};
+        if (dgKey) cfg.deepgram.apiKey = dgKey;
+
+        if (!cfg.skills) cfg.skills = {};
+        if (!cfg.skills.email) cfg.skills.email = {};
+        const emailSmtp = document.getElementById('cfg-email-smtp').value.trim();
+        const emailPort = document.getElementById('cfg-email-port').value.trim();
+        const emailSender = document.getElementById('cfg-email-sender').value.trim();
+        const emailPassword = document.getElementById('cfg-email-password').value.trim();
+        if (emailSmtp) cfg.skills.email.smtpServer = emailSmtp;
+        if (emailPort) cfg.skills.email.smtpPort = parseInt(emailPort);
+        if (emailSender) cfg.skills.email.senderEmail = emailSender;
+        if (emailPassword) cfg.skills.email.senderPassword = emailPassword;
+
+        if (!cfg.skills.github) cfg.skills.github = {};
+        const ghToken = document.getElementById('cfg-github-token').value.trim();
+        if (ghToken) cfg.skills.github.token = ghToken;
+
+        if (!cfg.channels) cfg.channels = {};
+        if (!cfg.channels.telegram) cfg.channels.telegram = {};
+        const tgToken = document.getElementById('cfg-tg-token').value.trim();
+        if (tgToken) cfg.channels.telegram.token = tgToken;
+        const tgUsers = document.getElementById('cfg-tg-users').value.trim();
+        cfg.channels.telegram.allowedUsers = tgUsers ? tgUsers.split(',').map(s => s.trim()).filter(Boolean) : [];
+        cfg.channels.telegram.requireMention = document.getElementById('cfg-tg-mention').checked;
+
+        if (!cfg.channels.discord) cfg.channels.discord = {};
+        const dcToken = document.getElementById('cfg-dc-token').value.trim();
+        if (dcToken) cfg.channels.discord.token = dcToken;
+        const dcChannels = document.getElementById('cfg-dc-channels').value.trim();
+        cfg.channels.discord.allowedChannels = dcChannels ? dcChannels.split(',').map(s => s.trim()).filter(Boolean) : [];
+        cfg.channels.discord.requireMention = document.getElementById('cfg-dc-mention').checked;
+
+        if (!cfg.channels.whatsapp) cfg.channels.whatsapp = {};
+        const waPhone = document.getElementById('cfg-wa-phone').value.trim();
+        if (waPhone) cfg.channels.whatsapp.phoneNumberId = waPhone;
+        const waToken = document.getElementById('cfg-wa-token').value.trim();
+        if (waToken) cfg.channels.whatsapp.token = waToken;
+        cfg.channels.whatsapp.verifyToken = document.getElementById('cfg-wa-verify').value.trim() || 'pythonclaw_verify';
+        const waCallback = document.getElementById('cfg-wa-callback').value.trim();
+        if (waCallback) cfg.channels.whatsapp.callbackUrl = waCallback;
+        const waNumbers = document.getElementById('cfg-wa-numbers').value.trim();
+        cfg.channels.whatsapp.allowedNumbers = waNumbers ? waNumbers.split(',').map(s => s.trim()).filter(Boolean) : [];
+        cfg.channels.whatsapp.requireMention = document.getElementById('cfg-wa-mention').checked;
+
+        if (!cfg.agent) cfg.agent = {};
+        cfg.agent.maxParallelSkills = parseInt(document.getElementById('cfg-max-skills').value) || 5;
+
+        if (!cfg.web) cfg.web = {};
+        cfg.web.host = document.getElementById('cfg-web-host').value.trim() || '0.0.0.0';
+        cfg.web.port = parseInt(document.getElementById('cfg-web-port').value) || 7788;
+
+        const res = await fetch('/api/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ config: cfg }),
+        });
+        const result = await res.json();
+
+        if (result.ok) {
+          statusEl.textContent = result.providerReady ? 'Saved! Provider is active.' : 'Saved! Provider could not start — check your API key.';
+          statusEl.className = 'text-[.8125rem] ' + (result.providerReady ? 'text-accent-green' : 'text-accent-amber');
+          loadConfig();
+          refreshDashboard();
+        } else {
+          statusEl.textContent = 'Error: ' + (result.error || 'Unknown');
+          statusEl.className = 'text-[.8125rem] text-accent-red';
+        }
+      } catch (e) {
+        statusEl.textContent = 'Error: ' + e.message;
+        statusEl.className = 'text-[.8125rem] text-accent-red';
+      } finally { btn.disabled = false; }
     }
-  } catch (e) {
-    statusEl.textContent = 'Error: ' + e.message;
-    statusEl.className = 'text-[.8125rem] text-accent-red';
-  } finally { btn.disabled = false; }
-}
 
-// ── Chat ─────────────────────────────────────────────────────────────────────
-function connectWebSocket() {
-  const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  ws = new WebSocket(protocol + '//' + location.host + '/ws/chat');
+    // ── Chat ─────────────────────────────────────────────────────────────────────
+    function connectWebSocket() {
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      ws = new WebSocket(protocol + '//' + location.host + '/ws/chat');
 
-  ws.onopen = () => {
-    document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-accent-green shrink-0';
-    document.getElementById('ws-status').textContent = 'Connected';
-  };
-  ws.onclose = () => {
-    document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-accent-red shrink-0';
-    document.getElementById('ws-status').textContent = 'Disconnected';
-    setTimeout(connectWebSocket, 3000);
-  };
-  ws.onerror = () => { ws.close(); };
+      ws.onopen = () => {
+        document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-accent-green shrink-0';
+        document.getElementById('ws-status').textContent = 'Connected';
+      };
+      ws.onclose = () => {
+        document.getElementById('ws-indicator').className = 'w-2 h-2 rounded-full bg-accent-red shrink-0';
+        document.getElementById('ws-status').textContent = 'Disconnected';
+        setTimeout(connectWebSocket, 3000);
+      };
+      ws.onerror = () => { ws.close(); };
 
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.type === 'thinking') { addThinking(); return; }
-    if (data.type === 'stream') {
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'thinking') { addThinking(); return; }
+        if (data.type === 'stream') {
+          removeThinking();
+          appendStreamToken(data.content);
+          return;
+        }
+        removeThinking();
+        finalizeStream();
+        chatWaiting = false;
+        updateSendButton();
+        if (data.type === 'response') addMessage('bot', data.content);
+        else if (data.type === 'error') addMessage('bot', 'Error: ' + data.content);
+      };
+    }
+
+    let _streamBubble = null;
+    let _streamRaw = '';
+
+    function appendStreamToken(text) {
+      const container = document.getElementById('chat-messages');
+      if (!_streamBubble) {
+        const welcome = container.querySelector('.text-center');
+        if (welcome) welcome.remove();
+        const wrapper = document.createElement('div');
+        wrapper.id = 'stream-wrapper';
+        wrapper.className = 'flex justify-start fade-in';
+        const row = document.createElement('div');
+        row.className = 'flex items-end gap-2.5 max-w-[75%]';
+        const avatar = document.createElement('div');
+        avatar.className = 'w-7 h-7 rounded-lg bg-surface-800 border border-surface-700 flex items-center justify-center shrink-0';
+        avatar.innerHTML = '<img src="/static/logo.png" class="w-4 h-4 rounded">';
+        row.appendChild(avatar);
+        const bubble = document.createElement('div');
+        bubble.className = 'msg-bot text-gray-200 rounded-2xl px-4 py-3 text-[.8125rem] leading-relaxed';
+        row.appendChild(bubble);
+        wrapper.appendChild(row);
+        container.appendChild(wrapper);
+        _streamBubble = bubble;
+        _streamRaw = '';
+      }
+      _streamRaw += text;
+      _streamBubble.innerHTML = renderMarkdown(_streamRaw);
+      scrollChat();
+    }
+
+    function finalizeStream() {
+      if (_streamBubble) {
+        const wrapper = document.getElementById('stream-wrapper');
+        if (wrapper) wrapper.remove();
+        _streamBubble = null;
+        _streamRaw = '';
+      }
+    }
+
+    function addMessage(role, content) {
+      const container = document.getElementById('chat-messages');
+      const welcome = container.querySelector('.text-center');
+      if (welcome) welcome.remove();
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex fade-in ' + (role === 'user' ? 'justify-end' : 'justify-start');
+
+      const row = document.createElement('div');
+      row.className = 'flex items-end gap-2.5 max-w-[75%]';
+
+      if (role === 'bot') {
+        const avatar = document.createElement('div');
+        avatar.className = 'w-7 h-7 rounded-lg bg-surface-800 border border-surface-700 flex items-center justify-center shrink-0';
+        avatar.innerHTML = '<img src="/static/logo.png" class="w-4 h-4 rounded">';
+        row.appendChild(avatar);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = (role === 'user' ? 'msg-user text-white' : 'msg-bot text-gray-200') +
+        ' rounded-2xl px-4 py-3 text-[.8125rem] leading-relaxed';
+      if (role === 'user') bubble.textContent = content;
+      else bubble.innerHTML = renderMarkdown(content);
+
+      row.appendChild(bubble);
+      wrapper.appendChild(row);
+      container.appendChild(wrapper);
+      scrollChat();
+    }
+
+    function addThinking() {
       removeThinking();
-      appendStreamToken(data.content);
-      return;
-    }
-    removeThinking();
-    finalizeStream();
-    chatWaiting = false;
-    updateSendButton();
-    if (data.type === 'response') addMessage('bot', data.content);
-    else if (data.type === 'error') addMessage('bot', 'Error: ' + data.content);
-  };
-}
-
-let _streamBubble = null;
-let _streamRaw = '';
-
-function appendStreamToken(text) {
-  const container = document.getElementById('chat-messages');
-  if (!_streamBubble) {
-    const welcome = container.querySelector('.text-center');
-    if (welcome) welcome.remove();
-    const wrapper = document.createElement('div');
-    wrapper.id = 'stream-wrapper';
-    wrapper.className = 'flex justify-start fade-in';
-    const row = document.createElement('div');
-    row.className = 'flex items-end gap-2.5 max-w-[75%]';
-    const avatar = document.createElement('div');
-    avatar.className = 'w-7 h-7 rounded-lg bg-surface-800 border border-surface-700 flex items-center justify-center shrink-0';
-    avatar.innerHTML = '<img src="/static/logo.png" class="w-4 h-4 rounded">';
-    row.appendChild(avatar);
-    const bubble = document.createElement('div');
-    bubble.className = 'msg-bot text-gray-200 rounded-2xl px-4 py-3 text-[.8125rem] leading-relaxed';
-    row.appendChild(bubble);
-    wrapper.appendChild(row);
-    container.appendChild(wrapper);
-    _streamBubble = bubble;
-    _streamRaw = '';
-  }
-  _streamRaw += text;
-  _streamBubble.innerHTML = renderMarkdown(_streamRaw);
-  scrollChat();
-}
-
-function finalizeStream() {
-  if (_streamBubble) {
-    const wrapper = document.getElementById('stream-wrapper');
-    if (wrapper) wrapper.remove();
-    _streamBubble = null;
-    _streamRaw = '';
-  }
-}
-
-function addMessage(role, content) {
-  const container = document.getElementById('chat-messages');
-  const welcome = container.querySelector('.text-center');
-  if (welcome) welcome.remove();
-
-  const wrapper = document.createElement('div');
-  wrapper.className = 'flex fade-in ' + (role === 'user' ? 'justify-end' : 'justify-start');
-
-  const row = document.createElement('div');
-  row.className = 'flex items-end gap-2.5 max-w-[75%]';
-
-  if (role === 'bot') {
-    const avatar = document.createElement('div');
-    avatar.className = 'w-7 h-7 rounded-lg bg-surface-800 border border-surface-700 flex items-center justify-center shrink-0';
-    avatar.innerHTML = '<img src="/static/logo.png" class="w-4 h-4 rounded">';
-    row.appendChild(avatar);
-  }
-
-  const bubble = document.createElement('div');
-  bubble.className = (role === 'user' ? 'msg-user text-white' : 'msg-bot text-gray-200') +
-    ' rounded-2xl px-4 py-3 text-[.8125rem] leading-relaxed';
-  if (role === 'user') bubble.textContent = content;
-  else bubble.innerHTML = renderMarkdown(content);
-
-  row.appendChild(bubble);
-  wrapper.appendChild(row);
-  container.appendChild(wrapper);
-  scrollChat();
-}
-
-function addThinking() {
-  removeThinking();
-  const container = document.getElementById('chat-messages');
-  const wrapper = document.createElement('div');
-  wrapper.id = 'thinking-indicator';
-  wrapper.className = 'flex justify-start fade-in';
-  wrapper.innerHTML = `
+      const container = document.getElementById('chat-messages');
+      const wrapper = document.createElement('div');
+      wrapper.id = 'thinking-indicator';
+      wrapper.className = 'flex justify-start fade-in';
+      wrapper.innerHTML = `
     <div class="flex items-end gap-2.5">
       <div class="w-7 h-7 rounded-lg bg-surface-800 border border-surface-700 flex items-center justify-center shrink-0">
         <img src="/static/logo.png" class="w-4 h-4 rounded">
@@ -1605,137 +1905,115 @@ function addThinking() {
       </div>
     </div>
   `;
-  container.appendChild(wrapper);
-  scrollChat();
-}
-
-function removeThinking() {
-  const el = document.getElementById('thinking-indicator');
-  if (el) el.remove();
-}
-
-function scrollChat() {
-  const c = document.getElementById('chat-messages');
-  requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; });
-}
-
-function updateSendButton() {
-  document.getElementById('chat-send').disabled = chatWaiting;
-  document.getElementById('chat-input').disabled = chatWaiting;
-}
-
-// ── Markdown ─────────────────────────────────────────────────────────────────
-function renderMarkdown(text) {
-  let html = escapeHtml(text);
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
-    '<pre class="bg-surface-950 border border-surface-700/50 rounded-lg p-3.5 my-2.5 overflow-x-auto text-[.75rem] leading-relaxed"><code>' + code.trim() + '</code></pre>');
-  html = html.replace(/`([^`]+)`/g, '<code class="bg-surface-800/80 text-brand-300 px-1.5 py-0.5 rounded text-[.75rem]">$1</code>');
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
-  html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
-  html = html.replace(/^[-•] (.+)/gm, '<span class="flex gap-2 items-start"><span class="text-brand-400 mt-0.5">&#8226;</span><span>$1</span></span>');
-  html = html.replace(/^\d+\. (.+)/gm, '<span class="flex gap-2 items-start"><span class="text-brand-400 font-medium">$&</span></span>');
-  html = html.replace(/\n/g, '<br>');
-  return html;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-// ── Voice input (Deepgram) ───────────────────────────────────────────────────
-let _mediaRecorder = null;
-let _audioChunks = [];
-let _micActive = false;
-
-function toggleMic() {
-  if (_micActive) { stopMic(); return; }
-  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-    _micActive = true;
-    const btn = document.getElementById('mic-btn');
-    btn.classList.add('!bg-red-600', '!text-white');
-    btn.title = 'Recording… click to stop';
-    _audioChunks = [];
-    _mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
-    _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
-    _mediaRecorder.onstop = () => {
-      stream.getTracks().forEach(t => t.stop());
-      const blob = new Blob(_audioChunks, { type: 'audio/webm' });
-      transcribeAudio(blob);
-    };
-    _mediaRecorder.start();
-  }).catch(err => {
-    console.error('Mic access denied:', err);
-    alert('Microphone access denied. Please allow microphone access and try again.');
-  });
-}
-
-function stopMic() {
-  _micActive = false;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.remove('!bg-red-600', '!text-white');
-  btn.title = 'Voice input';
-  if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
-    _mediaRecorder.stop();
-  }
-}
-
-async function transcribeAudio(blob) {
-  const btn = document.getElementById('mic-btn');
-  btn.classList.add('animate-pulse');
-  btn.title = 'Transcribing…';
-  try {
-    const resp = await fetch('/api/transcribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'audio/webm' },
-      body: blob,
-    });
-    const data = await resp.json();
-    if (data.ok && data.transcript) {
-      const input = document.getElementById('chat-input');
-      input.value = (input.value ? input.value + ' ' : '') + data.transcript;
-      input.focus();
-    } else {
-      alert(data.error || 'Transcription returned empty result.');
+      container.appendChild(wrapper);
+      scrollChat();
     }
-  } catch (e) {
-    console.error('Transcribe error:', e);
-    alert('Transcription failed: ' + e.message);
-  } finally {
-    btn.classList.remove('animate-pulse');
-    btn.title = 'Voice input';
-  }
-}
 
-// ── Chat form ────────────────────────────────────────────────────────────────
-let _pendingImage = null;
+    function removeThinking() {
+      const el = document.getElementById('thinking-indicator');
+      if (el) el.remove();
+    }
 
-function handleImageSelect(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    _pendingImage = reader.result;
-    document.getElementById('image-preview-img').src = _pendingImage;
-    document.getElementById('image-preview').classList.remove('hidden');
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-}
+    function scrollChat() {
+      const c = document.getElementById('chat-messages');
+      requestAnimationFrame(() => { c.scrollTop = c.scrollHeight; });
+    }
 
-function clearImageAttachment() {
-  _pendingImage = null;
-  document.getElementById('image-preview').classList.add('hidden');
-}
+    function updateSendButton() {
+      document.getElementById('chat-send').disabled = chatWaiting;
+      document.getElementById('chat-input').disabled = chatWaiting;
+    }
 
-document.getElementById('chat-input').addEventListener('paste', (e) => {
-  const items = e.clipboardData?.items;
-  if (!items) return;
-  for (const item of items) {
-    if (item.type.startsWith('image/')) {
-      e.preventDefault();
-      const file = item.getAsFile();
+    // ── Markdown ─────────────────────────────────────────────────────────────────
+    function renderMarkdown(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+        '<pre class="bg-surface-950 border border-surface-700/50 rounded-lg p-3.5 my-2.5 overflow-x-auto text-[.75rem] leading-relaxed"><code>' + code.trim() + '</code></pre>');
+      html = html.replace(/`([^`]+)`/g, '<code class="bg-surface-800/80 text-brand-300 px-1.5 py-0.5 rounded text-[.75rem]">$1</code>');
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
+      html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
+      html = html.replace(/^[-•] (.+)/gm, '<span class="flex gap-2 items-start"><span class="text-brand-400 mt-0.5">&#8226;</span><span>$1</span></span>');
+      html = html.replace(/^\d+\. (.+)/gm, '<span class="flex gap-2 items-start"><span class="text-brand-400 font-medium">$&</span></span>');
+      html = html.replace(/\n/g, '<br>');
+      return html;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ── Voice input (Deepgram) ───────────────────────────────────────────────────
+    let _mediaRecorder = null;
+    let _audioChunks = [];
+    let _micActive = false;
+
+    function toggleMic() {
+      if (_micActive) { stopMic(); return; }
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        _micActive = true;
+        const btn = document.getElementById('mic-btn');
+        btn.classList.add('!bg-red-600', '!text-white');
+        btn.title = 'Recording… click to stop';
+        _audioChunks = [];
+        _mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+        _mediaRecorder.ondataavailable = e => { if (e.data.size > 0) _audioChunks.push(e.data); };
+        _mediaRecorder.onstop = () => {
+          stream.getTracks().forEach(t => t.stop());
+          const blob = new Blob(_audioChunks, { type: 'audio/webm' });
+          transcribeAudio(blob);
+        };
+        _mediaRecorder.start();
+      }).catch(err => {
+        console.error('Mic access denied:', err);
+        alert('Microphone access denied. Please allow microphone access and try again.');
+      });
+    }
+
+    function stopMic() {
+      _micActive = false;
+      const btn = document.getElementById('mic-btn');
+      btn.classList.remove('!bg-red-600', '!text-white');
+      btn.title = 'Voice input';
+      if (_mediaRecorder && _mediaRecorder.state !== 'inactive') {
+        _mediaRecorder.stop();
+      }
+    }
+
+    async function transcribeAudio(blob) {
+      const btn = document.getElementById('mic-btn');
+      btn.classList.add('animate-pulse');
+      btn.title = 'Transcribing…';
+      try {
+        const resp = await fetch('/api/transcribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'audio/webm' },
+          body: blob,
+        });
+        const data = await resp.json();
+        if (data.ok && data.transcript) {
+          const input = document.getElementById('chat-input');
+          input.value = (input.value ? input.value + ' ' : '') + data.transcript;
+          input.focus();
+        } else {
+          alert(data.error || 'Transcription returned empty result.');
+        }
+      } catch (e) {
+        console.error('Transcribe error:', e);
+        alert('Transcription failed: ' + e.message);
+      } finally {
+        btn.classList.remove('animate-pulse');
+        btn.title = 'Voice input';
+      }
+    }
+
+    // ── Chat form ────────────────────────────────────────────────────────────────
+    let _pendingImage = null;
+
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
         _pendingImage = reader.result;
@@ -1743,36 +2021,59 @@ document.getElementById('chat-input').addEventListener('paste', (e) => {
         document.getElementById('image-preview').classList.remove('hidden');
       };
       reader.readAsDataURL(file);
-      break;
+      e.target.value = '';
     }
-  }
-});
 
-document.getElementById('chat-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const input = document.getElementById('chat-input');
-  const msg = input.value.trim();
-  if ((!msg && !_pendingImage) || chatWaiting || !ws || ws.readyState !== WebSocket.OPEN) return;
+    function clearImageAttachment() {
+      _pendingImage = null;
+      document.getElementById('image-preview').classList.add('hidden');
+    }
 
-  const displayMsg = msg || '(image)';
-  addMessage('user', displayMsg);
+    document.getElementById('chat-input').addEventListener('paste', (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          e.preventDefault();
+          const file = item.getAsFile();
+          const reader = new FileReader();
+          reader.onload = () => {
+            _pendingImage = reader.result;
+            document.getElementById('image-preview-img').src = _pendingImage;
+            document.getElementById('image-preview').classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
+          break;
+        }
+      }
+    });
 
-  if (_pendingImage) {
-    ws.send(JSON.stringify({ message: msg || 'What is in this image?', image: _pendingImage }));
-    clearImageAttachment();
-  } else {
-    ws.send(JSON.stringify({ message: msg }));
-  }
+    document.getElementById('chat-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if ((!msg && !_pendingImage) || chatWaiting || !ws || ws.readyState !== WebSocket.OPEN) return;
 
-  input.value = '';
-  chatWaiting = true;
-  updateSendButton();
-});
+      const displayMsg = msg || '(image)';
+      addMessage('user', displayMsg);
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-switchTab('dashboard');
-connectWebSocket();
-refreshDashboard();
-</script>
+      if (_pendingImage) {
+        ws.send(JSON.stringify({ message: msg || 'What is in this image?', image: _pendingImage }));
+        clearImageAttachment();
+      } else {
+        ws.send(JSON.stringify({ message: msg }));
+      }
+
+      input.value = '';
+      chatWaiting = true;
+      updateSendButton();
+    });
+
+    // ── Init ─────────────────────────────────────────────────────────────────────
+    switchTab('dashboard');
+    connectWebSocket();
+    refreshDashboard();
+  </script>
 </body>
+
 </html>
