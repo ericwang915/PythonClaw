@@ -469,5 +469,6 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ---
 
 <p align="center">
-  <sub>If PythonClaw helps you, consider giving it a ⭐</sub>
+  <sub>If PythonClaw helps you, consider giving it a ⭐</sub><br>
+  <sub>Made by the team behind <a href="https://audiee.ai">Audiee.ai</a> — private AI meeting notes for Mac that hand your meetings to agents like Claude Code and Cursor as MCP tools.</sub>
 </p>
